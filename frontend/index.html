@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Explorer — every planet, every open mystery</title>
+<meta name="description" content="Explore the Sun and eight planets in 3D, compare their real numbers, follow the open mysteries of the Solar System, and see what scientists have actually found in the search for life.">
+<meta name="theme-color" content="#070C20">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2313203A'/%3E%3Cellipse cx='16' cy='16' rx='11' ry='5' fill='none' stroke='%23DDE6FF' stroke-width='1.6' transform='rotate(-24 16 16)'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%232B3FE6'/%3E%3Ccircle cx='25' cy='12' r='2' fill='%23F5A623'/%3E%3C/svg%3E">
+<script>document.documentElement.className += ' js';</script>
+<style>
+:root{
+  --font-sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-serif:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --ink:#0B1226; --ink-soft:#2A3450; --ink-mute:#5B6688;
+  --paper:#F5F3EE; --paper-2:#ECE9E1; --line:#D9D4C7;
+  --night:#070C20; --night-2:#0E1730; --night-3:#16224A;
+  --night-line:#26325C; --night-ink:#E8ECFF; --night-ink-2:#B4BEE0; --night-ink-3:#7C87AE;
+  --signal:#2B3FE6; --signal-2:#566BFF;
+  --amber:#F5A623; --amber-2:#FFC15A;
+  --plasma:#FF6B3D; --ice:#6ED0E0;
+  --fs-0:.8125rem; --fs-1:.9375rem;
+  --fs-2:clamp(1rem,.95rem + .25vw,1.125rem);
+  --fs-3:clamp(1.15rem,1rem + .6vw,1.35rem);
+  --fs-4:clamp(1.4rem,1.1rem + 1.2vw,1.85rem);
+  --fs-5:clamp(1.9rem,1.3rem + 2.4vw,3rem);
+  --fs-6:clamp(2.4rem,1.4rem + 4.6vw,5.5rem);
+  --sp-1:.5rem; --sp-2:.75rem; --sp-3:1rem; --sp-4:1.5rem;
+  --sp-5:2rem; --sp-6:3rem; --sp-7:4.5rem; --sp-8:6rem;
+  --radius-s:8px; --radius-m:14px; --radius-l:22px;
+  --shadow-1:0 1px 2px rgba(11,18,38,.06),0 8px 24px rgba(11,18,38,.06);
+  --shadow-2:0 12px 40px rgba(11,18,38,.14);
+  --wrap:1240px;
+  --ease:cubic-bezier(.22,.7,.2,1);
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+body{margin:0;font-family:var(--font-sans);font-size:var(--fs-2);line-height:1.55;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-weight:600;letter-spacing:-.02em;line-height:1.05;margin:0}
+h2{font-size:var(--fs-5)}
+h3{font-size:var(--fs-3)}
+p{margin:0 0 1em}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img,canvas{max-width:100%}
+canvas{display:block}
+[hidden]{display:none !important}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:clamp(1.25rem,4vw,2.5rem)}
+.lead{font-family:var(--font-serif);font-size:var(--fs-3);color:var(--ink-soft);max-width:62ch}
+.section{padding-block:clamp(3rem,7vw,6rem);position:relative}
+.section-head{max-width:62ch;margin-bottom:var(--sp-6)}
+.section-head .lead{margin-top:var(--sp-3)}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:.75rem 1rem;z-index:100}
+.skip:focus{left:1rem;top:1rem;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.theme-night{background:var(--night);color:var(--night-ink)}
+.theme-night .lead{color:var(--night-ink-2)}
+.theme-paper{background:var(--paper)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:999px;border:1px solid transparent;cursor:pointer;font-weight:500;letter-spacing:-.01em;transition:transform .2s var(--ease),background-color .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--signal);color:#fff}
+.btn-primary:hover{background:var(--signal-2)}
+.btn-ghost{border-color:currentColor;color:inherit}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.theme-paper .btn-ghost:hover{background:rgba(11,18,38,.06)}
+.btn-small{padding:.4rem .8rem;font-size:var(--fs-0)}
+.btn-light{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.theme-paper .btn-light{background:var(--paper-2);color:var(--ink);border-color:var(--line)}
+.panel{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-l);padding:var(--sp-4)}
+.theme-night .panel{background:var(--night-2);border-color:var(--night-line)}
+
+/* Reveal animation only applies when .pre-anim is set by JS.
+   Without JS the elements are visible by default. */
+.pre-anim.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+.pre-anim.reveal.is-in{opacity:1;transform:none}
+.pre-anim.sweep{clip-path:inset(0 100% 0 0);transition:clip-path 1s var(--ease-out)}
+.pre-anim.sweep.is-in{clip-path:inset(0 0 0 0)}
+
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:40;backdrop-filter:blur(10px) saturate(1.1);background:color-mix(in srgb,var(--paper) 82%,transparent);border-bottom:1px solid var(--line);color:var(--ink)}
+.topbar[data-stuck="true"]{box-shadow:0 6px 24px rgba(11,18,38,.06)}
+.topbar-inner{max-width:var(--wrap);margin-inline:auto;display:flex;align-items:center;gap:var(--sp-4);padding:.85rem clamp(1.25rem,4vw,2.5rem)}
+.brand{display:inline-flex;align-items:center;gap:.6rem;font-weight:600;letter-spacing:-.02em}
+.brand-mark{width:26px;height:26px;color:var(--ink)}
+.nav{display:flex;gap:var(--sp-4);margin-inline:auto}
+.nav-link{font-size:var(--fs-1);color:var(--ink-mute);transition:color .2s var(--ease)}
+.nav-link:hover,.nav-link[aria-current="true"]{color:var(--ink)}
+.topbar-tools{display:flex;gap:.5rem}
+.tool-btn,.menu-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .75rem;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer}
+.tool-btn svg{width:16px;height:16px}
+.tool-btn kbd{font-size:11px;padding:1px 5px;border:1px solid var(--line);border-radius:5px;color:var(--ink-mute)}
+.menu-btn{display:none;padding:.55rem;flex-direction:column}
+.menu-btn span{display:block;width:18px;height:1.6px;background:currentColor}
+.menu-btn span + span{margin-top:4px}
+.trace{height:2px;background:transparent;position:relative;overflow:hidden}
+.trace i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--signal),var(--amber));transition:width .1s linear}
+@media (max-width:860px){
+  .nav{position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:0;background:var(--paper);border-bottom:1px solid var(--line);padding:var(--sp-3);transform:translateY(-110%);transition:transform .3s var(--ease)}
+  .nav[data-open="true"]{transform:translateY(0)}
+  .nav-link{padding:.85rem .25rem;border-bottom:1px solid var(--line);font-size:var(--fs-3)}
+  .menu-btn{display:inline-flex}
+  .tool-btn span,.tool-btn kbd{display:none}
+}
+
+/* Hero */
+.hero{min-height:100svh;position:relative;display:flex;align-items:center;overflow:hidden;background:var(--night)}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,12,32,.85) 0 40%,rgba(7,12,32,.2) 70%,transparent 100%)}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,380px);gap:var(--sp-6);align-items:end;padding-block:clamp(4rem,10vh,8rem)}
+.hero-copy{max-width:46rem}
+.hero-kicker{text-transform:uppercase;letter-spacing:.18em;font-size:var(--fs-0);color:var(--amber);margin-bottom:var(--sp-3)}
+.hero h1{font-size:var(--fs-6);color:#fff;letter-spacing:-.035em}
+.hero .lead{color:var(--night-ink-2);margin-top:var(--sp-4);font-size:var(--fs-3)}
+.hero .actions{display:flex;gap:var(--sp-3);margin-top:var(--sp-5);flex-wrap:wrap}
+.hero-tour{background:rgba(14,23,48,.7);border:1px solid var(--night-line);border-radius:var(--radius-l);padding:var(--sp-4);backdrop-filter:blur(12px);align-self:end}
+.tour-now{margin-bottom:var(--sp-3)}
+.tour-label{font-size:var(--fs-0);text-transform:uppercase;letter-spacing:.16em;color:var(--night-ink-3);display:block}
+.tour-now strong{display:block;font-size:var(--fs-4);margin-top:.25rem;color:#fff}
+.tour-now span:last-child{color:var(--night-ink-2);font-size:var(--fs-1)}
+.tour-controls{display:flex;gap:.35rem;margin-bottom:var(--sp-3)}
+.icon-btn{width:36px;height:36px;border-radius:999px;border:1px solid var(--night-line);background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:14px;height:14px}
+.icon-btn[aria-pressed="true"] .i-pause{display:none}
+.icon-btn[aria-pressed="false"] .i-play{display:none}
+.tour-dots{display:flex;gap:.35rem;list-style:none;padding:0;margin:0;flex-wrap:wrap}
+.tour-dots button{width:8px;height:8px;border-radius:999px;border:0;background:var(--night-ink-3);cursor:pointer;transition:background .2s,width .2s}
+.tour-dots button[aria-current="true"]{background:var(--amber);width:22px}
+@media (max-width:900px){.hero-inner{grid-template-columns:1fr}.hero-tour{align-self:stretch}}
+
+/* Solar section */
+.solar-top{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:var(--sp-5);margin-bottom:var(--sp-6)}
+@media (max-width:900px){.solar-top{grid-template-columns:1fr}}
+.window{position:relative;border:1px solid var(--line);border-radius:var(--radius-l);overflow:hidden;background:var(--paper-2)}
+.window-bar{display:flex;align-items:center;gap:var(--sp-2);padding:.6rem var(--sp-3);border-bottom:1px solid var(--line);font-size:var(--fs-0);color:var(--ink-mute)}
+.led{width:8px;height:8px;border-radius:999px;background:var(--amber);box-shadow:0 0 12px var(--amber)}
+.window-title{font-weight:500;color:var(--ink-soft)}
+.window-date{margin-left:auto;font-variant-numeric:tabular-nums}
+/* Wrapper defines the size, canvas fills it absolutely — no aspect-ratio fighting */
+.orbit-canvas-wrap{position:relative;width:100%;aspect-ratio:16/10;min-height:300px;background:#060a18}
+.orbit-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.orbit-controls{display:flex;gap:.5rem;padding:var(--sp-3);border-top:1px solid var(--line);flex-wrap:wrap}
+.orbit-controls select{appearance:none;padding:.4rem 1.8rem .4rem .75rem;border-radius:999px;border:1px solid var(--line);background:var(--paper);font:inherit;font-size:var(--fs-0)}
+.window figcaption{padding:0 var(--sp-3) var(--sp-3);color:var(--ink-mute);font-size:var(--fs-0)}
+.readout{display:grid;gap:var(--sp-3);align-content:start}
+.readout h3{margin:0 0 .25rem}
+.readout dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:.35rem var(--sp-3);font-size:var(--fs-1)}
+.readout dt{color:var(--ink-mute)}
+.readout dd{margin:0;font-variant-numeric:tabular-nums}
+.compare{margin-block:var(--sp-6)}
+.compare-head{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-3);flex-wrap:wrap}
+.chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.chips button{padding:.35rem .75rem;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:var(--fs-0)}
+.chips button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.compare-body{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--sp-5)}
+@media (max-width:900px){.compare-body{grid-template-columns:1fr}}
+.bars{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
+.bars li{display:grid;grid-template-columns:7rem 1fr max-content;align-items:center;gap:var(--sp-3);font-size:var(--fs-1)}
+.bars .bar-track{height:10px;background:var(--paper-2);border-radius:999px;overflow:hidden}
+.bars .bar-fill{height:100%;background:linear-gradient(90deg,var(--signal),var(--amber));transition:width .6s var(--ease)}
+.compare-side{display:grid;gap:var(--sp-3);align-content:start}
+.compare-insight{font-family:var(--font-serif);color:var(--ink-soft)}
+.toggle{display:inline-flex;align-items:center;gap:.5rem;font-size:var(--fs-1)}
+.toggle input{accent-color:var(--signal)}
+.table-wrap h3{margin-bottom:var(--sp-3)}
+.table-scroll{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-m);max-height:60vh}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-1);font-variant-numeric:tabular-nums}
+.data-table th,.data-table td{padding:.55rem .75rem;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.data-table th:first-child,.data-table td:first-child{text-align:left;position:sticky;left:0;background:var(--paper)}
+.data-table thead th{position:sticky;top:0;background:var(--paper-2);z-index:1}
+.data-table tbody tr{cursor:pointer}
+.data-table tbody tr:hover td{background:color-mix(in srgb,var(--signal) 6%,transparent)}
+
+/* Planets */
+.planet-picker{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:var(--sp-5)}
+.planet-picker button{padding:.5rem 1rem;border-radius:999px;border:1px solid var(--night-line);background:transparent;color:var(--night-ink-2);cursor:pointer;font-size:var(--fs-1);transition:background .2s,color .2s,border-color .2s}
+.planet-picker button[aria-selected="true"]{background:#fff;color:var(--ink);border-color:#fff}
+.planet-stage{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:var(--sp-5);align-items:start}
+@media (max-width:900px){.planet-stage{grid-template-columns:1fr}}
+.viewer{position:relative;aspect-ratio:1;border-radius:var(--radius-l);overflow:hidden;background:radial-gradient(60% 60% at 50% 45%,#0c1538 0,#05091a 100%);border:1px solid var(--night-line)}
+.viewer canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.interior-canvas{z-index:2}
+.viewer-hud{position:absolute;top:var(--sp-3);left:var(--sp-3);right:var(--sp-3);display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);z-index:3}
+.seg{display:inline-flex;border:1px solid var(--night-line);border-radius:999px;background:rgba(7,12,32,.55);backdrop-filter:blur(6px);overflow:hidden}
+.seg-btn{padding:.35rem .9rem;font-size:var(--fs-0);background:transparent;color:var(--night-ink-2);border:0;cursor:pointer}
+.seg-btn[aria-pressed="true"]{background:#fff;color:var(--ink)}
+.viewer-spin{font-size:var(--fs-0);color:var(--night-ink-3);margin:0;font-variant-numeric:tabular-nums}
+.viewer-hint{position:absolute;bottom:var(--sp-3);left:50%;transform:translateX(-50%);margin:0;font-size:var(--fs-0);color:var(--night-ink-3);z-index:3;transition:opacity .4s;pointer-events:none}
+.viewer-hint.fade{opacity:0}
+.planet-panel{display:grid;gap:var(--sp-4)}
+.planet-panel h3{font-size:var(--fs-4);margin:0}
+.planet-panel h4{font-size:var(--fs-2);text-transform:uppercase;letter-spacing:.14em;color:var(--night-ink-3);margin:var(--sp-3) 0 var(--sp-2)}
+.planet-panel .tagline{font-family:var(--font-serif);color:var(--night-ink-2)}
+.planet-panel .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+.kpi{border:1px solid var(--night-line);border-radius:var(--radius-m);padding:var(--sp-3)}
+.kpi b{display:block;font-size:var(--fs-0);color:var(--night-ink-3);font-weight:500;text-transform:uppercase;letter-spacing:.12em}
+.kpi span{font-size:var(--fs-3);font-variant-numeric:tabular-nums}
+.planet-panel .facts,.planet-panel .unknowns{padding-left:1.1rem;color:var(--night-ink-2);margin:0}
+.planet-panel .unknowns li::marker{color:var(--amber)}
+
+/* Mysteries */
+.finder{display:grid;gap:var(--sp-3);margin-bottom:var(--sp-5)}
+.finder-search{display:flex;align-items:center;gap:.5rem;padding:.4rem .4rem .4rem 1rem;border:1px solid var(--line);border-radius:999px;background:var(--paper-2)}
+.finder-search svg{width:18px;height:18px;color:var(--ink-mute);flex-shrink:0}
+.finder-search input{flex:1;border:0;background:transparent;padding:.55rem .25rem;font:inherit;color:inherit;outline:none}
+.search-status{color:var(--ink-mute);font-size:var(--fs-1);min-height:1.2em;margin:0}
+.mystery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--sp-4)}
+.mystery-card{border:1px solid var(--line);border-radius:var(--radius-l);padding:var(--sp-4);background:var(--paper-2);cursor:pointer;display:grid;gap:var(--sp-3);transition:transform .2s var(--ease),box-shadow .2s var(--ease);text-align:left}
+.mystery-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-1)}
+.mystery-card header{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.mystery-card .badge{font-size:var(--fs-0);padding:.2rem .55rem;border-radius:999px;background:var(--ink);color:#fff}
+.mystery-card .badge[data-status="open"]{background:var(--plasma)}
+.mystery-card .badge[data-status="partly-solved"]{background:var(--amber);color:var(--ink)}
+.mystery-card .badge[data-status="hypothesis"]{background:var(--signal)}
+.mystery-card h3{font-size:var(--fs-3);margin:0}
+.mystery-card p{margin:0;color:var(--ink-soft);font-size:var(--fs-1)}
+.mystery-card .where{font-size:var(--fs-0);color:var(--ink-mute)}
+.related{margin-top:var(--sp-6)}
+.related h3{margin-bottom:var(--sp-3)}
+.related ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sp-3)}
+.related a{display:block;padding:var(--sp-3);border:1px solid var(--line);border-radius:var(--radius-m);background:var(--paper-2)}
+.related a:hover{border-color:var(--ink-mute)}
+
+/* Modal */
+.modal{border:0;padding:0;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;width:min(92vw,780px);max-height:88vh;overflow:auto;background:var(--paper);color:var(--ink);border-radius:var(--radius-l);box-shadow:var(--shadow-2)}
+.modal::backdrop{background:rgba(7,12,32,.6);backdrop-filter:blur(4px)}
+.modal .mm-head{padding:var(--sp-5) var(--sp-5) var(--sp-3);border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:2}
+.modal .mm-head h3{font-size:var(--fs-4);margin:.35rem 0 .5rem}
+.modal .mm-head .where{color:var(--ink-mute);font-size:var(--fs-0)}
+.modal .mm-body{padding:var(--sp-5);display:grid;gap:var(--sp-5)}
+.modal .mm-visual{aspect-ratio:16/9;border-radius:var(--radius-m);overflow:hidden;background:var(--night);position:relative}
+.modal .mm-visual canvas{display:block;width:100%;height:100%;position:absolute;inset:0}
+.modal h4{font-size:var(--fs-2);text-transform:uppercase;letter-spacing:.14em;color:var(--ink-mute);margin:0 0 var(--sp-2)}
+.modal ul,.modal ol{padding-left:1.1rem}
+.modal .theory{border-left:3px solid var(--line);padding:.25rem 0 .25rem var(--sp-3);margin-bottom:var(--sp-3)}
+.modal .theory[data-status="leading"]{border-color:var(--signal)}
+.modal .theory[data-status="competing"]{border-color:var(--amber)}
+.modal .theory[data-status="speculative"]{border-color:var(--plasma)}
+.modal .theory b{display:block;margin-bottom:.25rem}
+.modal .timeline{display:grid;grid-template-columns:max-content 1fr;gap:.35rem var(--sp-3);font-size:var(--fs-1);margin:0}
+.modal .timeline dt{color:var(--ink-mute);font-variant-numeric:tabular-nums}
+.modal .timeline dd{margin:0}
+.modal .mm-close{position:absolute;top:var(--sp-3);right:var(--sp-3);background:var(--paper-2);border:1px solid var(--line);border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:20px;line-height:1;display:grid;place-items:center;z-index:3}
+.modal .badge{font-size:var(--fs-0);padding:.2rem .55rem;border-radius:999px;background:var(--ink);color:#fff}
+
+/* Life */
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--sp-2);margin-bottom:var(--sp-5)}
+.ladder button{padding:var(--sp-3);border:1px solid var(--night-line);background:transparent;color:var(--night-ink-2);border-radius:var(--radius-m);cursor:pointer;text-align:left;display:grid;gap:.35rem}
+.ladder button[aria-pressed="true"]{background:var(--night-2);color:#fff;border-color:var(--amber)}
+.ladder b{font-size:var(--fs-2)}
+.ladder small{font-size:var(--fs-0);color:inherit;opacity:.75}
+@media (max-width:780px){.ladder{grid-template-columns:repeat(2,1fr)}}
+.life-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:var(--sp-5);align-items:start}
+@media (max-width:900px){.life-grid{grid-template-columns:1fr}}
+.life-list{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
+.life-list button{width:100%;text-align:left;padding:var(--sp-3);border:1px solid var(--night-line);background:transparent;color:inherit;border-radius:var(--radius-m);cursor:pointer;display:grid;gap:.35rem}
+.life-list button[aria-current="true"]{background:var(--night-2);border-color:var(--amber)}
+.life-list .badge{font-size:var(--fs-0);padding:.15rem .5rem;border-radius:999px;border:1px solid var(--night-line);color:var(--night-ink-3);display:inline-block;width:max-content}
+.life-list .badge[data-level="4"]{border-color:#2fa576;color:#74e0b0}
+.life-list .badge[data-level="3"]{border-color:var(--amber);color:var(--amber-2)}
+.life-list .badge[data-level="2"]{border-color:var(--signal-2);color:#9aa8ff}
+.life-list .badge[data-level="1"]{border-color:var(--plasma);color:#ffa88c}
+.life-list .where{font-size:var(--fs-0);color:var(--night-ink-3)}
+.life-detail{border:1px solid var(--night-line);border-radius:var(--radius-l);padding:var(--sp-5);display:grid;gap:var(--sp-4)}
+.life-detail h3{font-size:var(--fs-4);margin:0}
+.life-detail .headline{font-family:var(--font-serif);color:var(--night-ink-2)}
+.life-detail h4{font-size:var(--fs-1);text-transform:uppercase;letter-spacing:.14em;color:var(--night-ink-3);margin:0 0 .35rem}
+.life-detail ul{color:var(--night-ink-2);padding-left:1.1rem;margin:0}
+.life-detail .visual{aspect-ratio:16/9;border-radius:var(--radius-m);overflow:hidden;background:#05091a;position:relative;min-height:220px}
+.life-detail .visual canvas{display:block;width:100%;height:100%;position:absolute;inset:0}
+.life-detail .sources{font-size:var(--fs-0);color:var(--night-ink-3);margin:0}
+.life-detail .badge{font-size:var(--fs-0);padding:.2rem .55rem;border-radius:999px;border:1px solid var(--night-line);color:var(--night-ink-2);display:inline-block;width:max-content}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--sp-6);margin-bottom:var(--sp-6)}
+@media (max-width:900px){.about-grid{grid-template-columns:1fr}}
+.principle-list{counter-reset:p;list-style:none;padding:0;display:grid;gap:var(--sp-3)}
+.principle-list li{counter-increment:p;padding-left:2.5rem;position:relative}
+.principle-list li::before{content:counter(p);position:absolute;left:0;top:0;width:1.75rem;height:1.75rem;display:grid;place-items:center;border-radius:999px;background:var(--ink);color:#fff;font-size:var(--fs-0);font-weight:600}
+.team-grid{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--sp-3)}
+.team-grid li{border:1px solid var(--line);border-radius:var(--radius-m);padding:var(--sp-3);background:var(--paper-2)}
+.team-grid b{display:block}
+.team-grid small{color:var(--ink-mute)}
+.team-grid p{margin:.35rem 0 0;font-size:var(--fs-1);color:var(--ink-soft)}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:var(--sp-5);align-items:start}
+@media (max-width:900px){.contact{grid-template-columns:1fr}}
+.contact form{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);position:relative}
+.contact .field{display:grid;gap:.35rem}
+.contact .field.wide{grid-column:1/-1}
+.contact label{font-size:var(--fs-1);color:var(--ink-soft)}
+.contact input,.contact textarea{font:inherit;padding:.65rem .8rem;border:1px solid var(--line);border-radius:var(--radius-s);background:var(--paper);color:inherit}
+.contact input:focus,.contact textarea:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:transparent}
+.field-error{color:#c01818;font-size:var(--fs-0);margin:0}
+.form-foot{grid-column:1/-1;display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap}
+.form-status{margin:0;color:var(--ink-mute);font-size:var(--fs-1)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px}
+
+/* Footer */
+.footer{padding-block:var(--sp-6);border-top:1px solid var(--night-line);background:var(--night);color:var(--night-ink)}
+.footer .wrap{display:grid;gap:var(--sp-2)}
+.brand-line{font-weight:600;letter-spacing:-.02em;margin:0}
+.footnote{color:var(--night-ink-3);font-size:var(--fs-0);max-width:72ch}
+.toast{position:fixed;left:50%;bottom:1.25rem;transform:translate(-50%,200%);background:var(--ink);color:#fff;padding:.65rem 1rem;border-radius:999px;font-size:var(--fs-1);transition:transform .35s var(--ease);z-index:60}
+.toast.show{transform:translate(-50%,0)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#home" aria-label="Space Explorer, back to top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="16" rx="12" ry="5.5" transform="rotate(-24 16 16)" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16" cy="16" r="4.2" fill="var(--signal)"/><circle cx="26" cy="11" r="2.2" fill="var(--amber)"/></svg>
+      <span>Space Explorer</span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <a class="nav-link" href="#solar">Solar System</a>
+      <a class="nav-link" href="#planets">Planets</a>
+      <a class="nav-link" href="#mysteries">Mysteries</a>
+      <a class="nav-link" href="#life">Life</a>
+      <a class="nav-link" href="#about">About</a>
+    </nav>
+    <div class="topbar-tools">
+      <button class="tool-btn" id="searchBtn" type="button" aria-label="Search mysteries">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span>Search</span><kbd>/</kbd>
+      </button>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu"><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="trace" aria-hidden="true"><i id="traceBar"></i></div>
+</header>
+
+<main id="main">
+  <section id="home" class="hero theme-night" aria-labelledby="hero-title">
+    <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="hero-kicker">An interactive guide to the Solar System</p>
+        <h1 id="hero-title">Every planet.<br>Every mystery.</h1>
+        <p class="lead">Fly past the Sun and all eight planets, compare their real numbers, and follow the scientists still working out what we don't know.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#solar">Start exploring</a>
+          <a class="btn btn-ghost" href="#mysteries">See open mysteries</a>
+        </div>
+      </div>
+      <div class="hero-tour" id="heroTour" aria-label="Flythrough controls">
+        <div class="tour-now" aria-live="polite">
+          <span class="tour-label">Now passing</span>
+          <strong id="tourName">Sun</strong>
+          <span id="tourFact">A star 109 times wider than Earth.</span>
+        </div>
+        <div class="tour-controls">
+          <button class="icon-btn" id="tourPrev" type="button" aria-label="Previous body"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn" id="tourPause" type="button" aria-pressed="false" aria-label="Pause flythrough"><svg viewBox="0 0 16 16" class="i-pause"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg viewBox="0 0 16 16" class="i-play"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg></button>
+          <button class="icon-btn" id="tourNext" type="button" aria-label="Next body"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <ol class="tour-dots" id="tourDots" aria-label="Choose a body"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="solar" class="section theme-paper" aria-labelledby="solar-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 id="solar-title">The Solar System in numbers.</h2>
+        <p class="lead">Positions are calculated for today's date from published orbital elements. Press play to watch the planets move at their real relative speeds, then compare any measurement side by side.</p>
+      </div>
+      <div class="solar-top">
+        <figure class="window orbit-window" id="orbitWindow">
+          <div class="window-bar">
+            <span class="led" aria-hidden="true"></span>
+            <span class="window-title">Orbit map, top view</span>
+            <output id="orbitDate" class="window-date"></output>
+          </div>
+          <div class="orbit-canvas-wrap">
+            <canvas id="orbitCanvas" class="orbit-canvas" width="900" height="560" role="img" aria-label="Top-down map of the planets' orbits showing their positions on the selected date."></canvas>
+          </div>
+          <div class="orbit-controls">
+            <button class="btn btn-small btn-light" id="orbitPlay" type="button" aria-pressed="false">Play</button>
+            <label class="select-wrap"><span class="sr-only">Time speed</span>
+              <select id="orbitSpeed">
+                <option value="1">1 day per second</option>
+                <option value="10">10 days per second</option>
+                <option value="30">1 month per second</option>
+                <option value="365" selected>1 year per second</option>
+                <option value="1826">5 years per second</option>
+              </select>
+            </label>
+            <button class="btn btn-small btn-light" id="orbitNow" type="button">Today</button>
+          </div>
+          <figcaption>Distances use a square-root scale so the inner planets stay visible. Orbits are drawn from real eccentricities.</figcaption>
+        </figure>
+        <aside class="readout panel reveal" id="readout" aria-live="polite"></aside>
+      </div>
+
+      <div class="compare reveal">
+        <div class="compare-head">
+          <h3>Compare every body</h3>
+          <div class="chips" id="metricChips" role="group" aria-label="Choose what to compare"></div>
+        </div>
+        <div class="compare-body">
+          <ul class="bars" id="bars"></ul>
+          <aside class="compare-side">
+            <p class="compare-insight" id="metricInsight"></p>
+            <label class="toggle"><input type="checkbox" id="logToggle"><span>Logarithmic scale</span></label>
+            <label class="toggle"><input type="checkbox" id="sortToggle"><span>Sort by value</span></label>
+          </aside>
+        </div>
+      </div>
+
+      <div class="table-wrap reveal">
+        <h3>All the data</h3>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Planet data table, scrolls horizontally">
+          <table class="data-table" id="dataTable"></table>
+        </div>
+        <p class="footnote">Figures are from NASA's planetary fact sheets, rounded. Select a row to open its 3D view.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="planets" class="section theme-night" aria-labelledby="planets-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 id="planets-title">Meet each world.</h2>
+        <p class="lead">Drag a planet to turn it. Its spin speed is drawn relative to Earth's, so Jupiter really does spin faster than Earth, and Venus turns the wrong way.</p>
+      </div>
+      <div class="planet-picker" id="planetPicker" role="tablist" aria-label="Choose a body"></div>
+      <div class="planet-stage">
+        <div class="viewer" id="viewer">
+          <canvas id="viewerCanvas" aria-label="Interactive 3D view of the selected planet. Drag to rotate."></canvas>
+          <canvas id="interiorCanvas" class="interior-canvas" hidden aria-label="Cross-section of the selected body's interior"></canvas>
+          <div class="viewer-hud">
+            <div class="seg" role="group" aria-label="View">
+              <button type="button" class="seg-btn" data-view="surface" aria-pressed="true">Surface</button>
+              <button type="button" class="seg-btn" data-view="inside" aria-pressed="false">Inside</button>
+            </div>
+            <p class="viewer-spin" id="viewerSpin"></p>
+          </div>
+          <p class="viewer-hint" id="viewerHint">Drag to rotate</p>
+        </div>
+        <article class="planet-panel" id="planetPanel" aria-live="polite"></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="mysteries" class="section theme-paper" aria-labelledby="mysteries-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 id="mysteries-title">What we still don't know.</h2>
+        <p class="lead">Each card is an open scientific question. Open one to watch the leading explanations play out, compare competing theories and see how researchers got this far.</p>
+      </div>
+      <div class="finder reveal">
+        <form class="finder-search" id="searchForm" role="search" novalidate>
+          <label class="sr-only" for="mysterySearch">Search mysteries, planets and evidence</label>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <input id="mysterySearch" type="search" placeholder="Try: ocean, tilt, red spot, why is Venus hot" autocomplete="off" aria-describedby="searchStatus" aria-controls="mysteryGrid">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+        <div class="chips" id="mysteryChips" role="group" aria-label="Filter by topic"></div>
+        <p class="search-status" id="searchStatus" role="status"></p>
+      </div>
+      <div class="mystery-grid" id="mysteryGrid"></div>
+      <div class="related" id="relatedResults" hidden></div>
+    </div>
+  </section>
+
+  <section id="life" class="section theme-night" aria-labelledby="life-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 id="life-title">Is anyone out there?</h2>
+        <p class="lead">Short answer: nobody knows yet. Here is what researchers have actually found, from solid chemistry to disputed signals, ranked by how strong the evidence is.</p>
+      </div>
+      <div class="ladder reveal" id="ladder" role="group" aria-label="Evidence levels, filter the list"></div>
+      <div class="life-grid">
+        <ul class="life-list" id="lifeList" aria-label="Evidence entries"></ul>
+        <article class="life-detail" id="lifeDetail" aria-live="polite"></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section theme-paper" aria-labelledby="about-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 id="about-title">Built by people who like asking why.</h2>
+        <p class="lead">Space Explorer exists because the best way to understand a big number is to see it, move it and compare it. We combine published data with live simulations, and we label what is known, what is debated and what is guesswork.</p>
+      </div>
+      <div class="about-grid">
+        <div class="principles reveal">
+          <h3>How we keep it honest</h3>
+          <ol class="principle-list">
+            <li><strong>Evidence levels.</strong> Every claim about life is placed on a five-step ladder, from speculation to confirmed. The top step is still empty.</li>
+            <li><strong>Sources named.</strong> Data comes from NASA, ESA and ISRO fact sheets and from papers we cite on each entry.</li>
+            <li><strong>Visuals are explainers.</strong> Where a simulation illustrates an idea rather than shows a photograph, we say so.</li>
+            <li><strong>Reviewed regularly.</strong> <span id="reviewed">Content last reviewed recently.</span> Moon counts and mission dates change; we update them.</li>
+          </ol>
+        </div>
+        <div class="team reveal">
+          <h3>The team</h3>
+          <ul class="team-grid" id="teamGrid"></ul>
+        </div>
+      </div>
+      <div class="contact panel reveal">
+        <div class="contact-copy">
+          <h3>Found an error? Have a question?</h3>
+          <p>Tell us what you spotted or what you would like to see next. Scientists and teachers are especially welcome.</p>
+        </div>
+        <form id="contactForm" novalidate>
+          <div class="field"><label for="cName">Name</label><input id="cName" name="name" autocomplete="name" required maxlength="80"><p class="field-error" id="cNameErr" hidden></p></div>
+          <div class="field"><label for="cEmail">Email</label><input id="cEmail" name="email" type="email" autocomplete="email" required maxlength="120"><p class="field-error" id="cEmailErr" hidden></p></div>
+          <div class="field wide"><label for="cMsg">Message</label><textarea id="cMsg" name="message" rows="4" required maxlength="2000"></textarea><p class="field-error" id="cMsgErr" hidden></p></div>
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="form-foot"><button class="btn btn-primary" type="submit" id="cSubmit">Send message</button><p class="form-status" id="cStatus" role="status"></p></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer theme-night">
+  <div class="wrap">
+    <p class="brand-line">Space Explorer</p>
+    <p class="footnote">Planet textures: derived from public maps by James Hastings-Trew (planetpixelemporium.com), used for non-commercial purposes. Data: NASA Planetary Fact Sheet, JPL approximate orbital elements, and the papers cited on each page. Single-file build.</p>
+  </div>
+</footer>
+
+<dialog class="modal" id="mysteryModal" aria-labelledby="mmTitle"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.170.0/build/three.module.js" } }
+</script>
+
+<script type="module">
+/* ============ DATA ============ */
+const PLANETS = [
+  { id:"sun", name:"Sun", order:0, kind:"star", type:"G-type main-sequence star", color:"#ffb347",
+    tagline:"The star that holds the Solar System together.",
+    physical:{ diameterKm:1392700, massKg:1.9885e30, massEarths:332946, gravity:274, escapeVelocityKms:617.5, densityGcm3:1.41, meanTempC:5500, tempNote:"Visible surface (photosphere). The core is about 15 million °C.", tempRangeC:[5500,15000000] },
+    orbit:{ semiMajorAxisAu:null, distanceMillionKm:0, periodDays:null, velocityKms:230, eccentricity:null, inclinationDeg:null, elements:null, note:"The Sun orbits the centre of the Milky Way at about 230 km/s." },
+    rotation:{ periodHours:609.6, solarDayHours:609.6, axialTiltDeg:7.25, direction:"prograde", note:"Rotates faster at the equator than at the poles." },
+    moons:0, moonsNote:"",
+    atmosphere:{ summary:"The Sun is plasma all the way through.", pressure:"n/a", composition:[{gas:"Hydrogen",pct:73.5},{gas:"Helium",pct:24.9},{gas:"Heavier elements",pct:1.6}] },
+    interior:[{name:"Core (fusion)",to:.25,color:"#fff3c4"},{name:"Radiative zone",to:.7,color:"#ffc15a"},{name:"Convective zone",to:.999,color:"#ff8a1f"},{name:"Photosphere",to:1,color:"#ffd27a"}],
+    speciality:"Holds 99.86% of all the mass in the Solar System. Every second it turns about 4 million tonnes of matter into energy.",
+    facts:["Sunlight takes 8 minutes 20 seconds to reach Earth.","The core fuses hydrogen into helium at about 15 million °C.","It is about 4.6 billion years old and roughly halfway through its main-sequence life.","The 11-year solar cycle swaps its magnetic poles."],
+    unknowns:["Why is the corona hundreds of times hotter than the surface?","What drives the 11-year magnetic cycle?"],
+    missions:[{name:"SOHO",year:"1995",agency:"ESA/NASA",note:"Watched the Sun continuously for 30 years."},{name:"Parker Solar Probe",year:"2018",agency:"NASA",note:"First spacecraft to fly through the corona."},{name:"Solar Orbiter",year:"2020",agency:"ESA/NASA",note:"First images of the Sun's polar regions."},{name:"Aditya-L1",year:"2023",agency:"ISRO",note:"India's solar observatory at Sun–Earth L1."}],
+    mysteryIds:["solar-corona"], tags:["star","fusion","corona","flare","sunspot","solar wind"] },
+  { id:"mercury", name:"Mercury", order:1, kind:"planet", type:"Terrestrial planet", color:"#a7a29b",
+    tagline:"Smallest planet, fastest orbit, and a surprisingly huge iron core.",
+    physical:{ diameterKm:4879, massKg:3.30e23, massEarths:.0553, gravity:3.7, escapeVelocityKms:4.25, densityGcm3:5.43, meanTempC:167, tempNote:"Swings from about −180 °C at night to 430 °C by day.", tempRangeC:[-180,430] },
+    orbit:{ semiMajorAxisAu:.387, distanceMillionKm:57.9, periodDays:87.97, velocityKms:47.4, eccentricity:.2056, inclinationDeg:7, elements:{a:.38709927,e:.20563593,i:7.00497902,L0:252.25032350,Lrate:149472.67411175,peri:77.45779628,node:48.33076593} },
+    rotation:{ periodHours:1407.6, solarDayHours:4222.6, axialTiltDeg:.03, direction:"prograde", note:"One sunrise-to-sunrise day lasts 176 Earth days." },
+    moons:0, moonsNote:"",
+    atmosphere:{ summary:"Not a true atmosphere: a thin exosphere blasted off by sunlight and solar wind.", pressure:"Almost none", composition:[{gas:"Oxygen",pct:42},{gas:"Sodium",pct:29},{gas:"Hydrogen",pct:22},{gas:"Helium",pct:6},{gas:"Other",pct:1}] },
+    interior:[{name:"Iron-rich core",to:.83,color:"#e4b25b"},{name:"Rocky mantle and crust",to:1,color:"#8a8581"}],
+    speciality:"Its core is about 85% of the planet's radius, the largest share of any planet. Ice survives in craters at its poles that never see sunlight.",
+    facts:["A year (88 days) is shorter than a single day (176 days).","Shrinking as its core cools.","Has a weak magnetic field.","Without a thick atmosphere, it has no weather and no wind."],
+    unknowns:["Why is the core so big?","Why is the surface rich in volatile elements that should have been baked off?"],
+    missions:[{name:"Mariner 10",year:"1974",agency:"NASA",note:"First flybys, imaged about 45% of the surface."},{name:"MESSENGER",year:"2011",agency:"NASA",note:"First orbiter; mapped the whole planet and found polar ice."},{name:"BepiColombo",year:"2018",agency:"ESA/JAXA",note:"Enters Mercury orbit November 2026."}],
+    mysteryIds:["mercury-core"], tags:["iron core","crater","scarp","exosphere"] },
+  { id:"venus", name:"Venus", order:2, kind:"planet", type:"Terrestrial planet", color:"#e6c98a",
+    tagline:"Earth's size-twin, turned into the hottest oven in the Solar System.",
+    physical:{ diameterKm:12104, massKg:4.87e24, massEarths:.815, gravity:8.87, escapeVelocityKms:10.36, densityGcm3:5.24, meanTempC:464, tempNote:"Hot enough to melt lead, and almost the same day and night.", tempRangeC:[455,475] },
+    orbit:{ semiMajorAxisAu:.723, distanceMillionKm:108.2, periodDays:224.7, velocityKms:35, eccentricity:.0068, inclinationDeg:3.4, elements:{a:.72333566,e:.00677672,i:3.39467605,L0:181.97909950,Lrate:58517.81538729,peri:131.60246718,node:76.67984255} },
+    rotation:{ periodHours:5832.5, solarDayHours:2802, axialTiltDeg:177.4, direction:"retrograde", note:"Spins backwards, so the Sun rises in the west. A day is longer than its year." },
+    moons:0, moonsNote:"",
+    atmosphere:{ summary:"A crushing carbon-dioxide atmosphere under thick clouds of sulfuric acid.", pressure:"About 92 times Earth's", composition:[{gas:"Carbon dioxide",pct:96.5},{gas:"Nitrogen",pct:3.5}] },
+    interior:[{name:"Core (inferred)",to:.5,color:"#d9893b"},{name:"Mantle",to:.99,color:"#b3562a"},{name:"Crust",to:1,color:"#7a4a2d"}],
+    speciality:"The hottest planet, hotter even than Mercury. Surface pressure equals being about 900 m under the ocean on Earth.",
+    facts:["Spins backwards, extremely slowly.","Radar shows thousands of volcanoes.","Clouds of sulfuric acid whip around in about four Earth days.","The brightest planet in our sky."],
+    unknowns:["Did Venus ever have oceans?","Is it volcanically active today?","What is the 'unknown absorber' in its clouds?"],
+    missions:[{name:"Venera 7",year:"1970",agency:"USSR",note:"First spacecraft to transmit from the surface of another planet."},{name:"Magellan",year:"1990",agency:"NASA",note:"Radar-mapped 98% of the surface."},{name:"Akatsuki",year:"2010",agency:"JAXA",note:"Studied the clouds from orbit."},{name:"EnVision",year:"planned",agency:"ESA",note:"Radar orbiter planned for the early 2030s."}],
+    mysteryIds:["venus-greenhouse"], tags:["greenhouse","clouds","acid","volcano","retrograde"] },
+  { id:"earth", name:"Earth", order:3, kind:"planet", type:"Terrestrial planet", color:"#4f8fe0",
+    tagline:"The only world where life is confirmed.",
+    physical:{ diameterKm:12756, massKg:5.97e24, massEarths:1, gravity:9.8, escapeVelocityKms:11.19, densityGcm3:5.51, meanTempC:15, tempNote:"Global average, kept in the liquid-water range by the atmosphere.", tempRangeC:[-89,57] },
+    orbit:{ semiMajorAxisAu:1, distanceMillionKm:149.6, periodDays:365.26, velocityKms:29.8, eccentricity:.0167, inclinationDeg:0, elements:{a:1.00000261,e:.01671123,i:-.00001531,L0:100.46457166,Lrate:35999.37244981,peri:102.93768193,node:0} },
+    rotation:{ periodHours:23.93, solarDayHours:24, axialTiltDeg:23.44, direction:"prograde", note:"The 23.4° tilt gives us seasons." },
+    moons:1, moonsNote:"",
+    atmosphere:{ summary:"A thin, oxygen-rich layer; most weather happens in its lowest 12 km.", pressure:"1 bar (sea level)", composition:[{gas:"Nitrogen",pct:78.1},{gas:"Oxygen",pct:20.9},{gas:"Argon",pct:.9},{gas:"Other",pct:.1}] },
+    interior:[{name:"Inner core (solid iron)",to:.19,color:"#fff0a8"},{name:"Outer core (liquid iron)",to:.55,color:"#f59b2d"},{name:"Mantle",to:.995,color:"#c4502a"},{name:"Crust",to:1,color:"#3f7a4d"}],
+    speciality:"The only planet known to have liquid water on its surface (about 71% covered), plate tectonics and life.",
+    facts:["Its magnetic field shields the surface from the solar wind.","The Moon is large for its planet and steadies Earth's tilt.","About 4.5 billion years old.","The only planet not named after a god."],
+    unknowns:["Where did the Moon come from?","How did life begin?"],
+    missions:[{name:"Landsat",year:"1972",agency:"NASA/USGS",note:"Longest continuous record of Earth from space."},{name:"International Space Station",year:"1998",agency:"Multiple",note:"Permanently crewed since 2000."},{name:"Copernicus Sentinels",year:"2014",agency:"ESA/EU",note:"Daily monitoring of land, ocean and air."}],
+    mysteryIds:["moon-origin"], tags:["moon","water","life","magnetic field","plate tectonics"] },
+  { id:"mars", name:"Mars", order:4, kind:"planet", type:"Terrestrial planet", color:"#c1502e",
+    tagline:"A frozen desert that once had rivers.",
+    physical:{ diameterKm:6792, massKg:6.42e23, massEarths:.107, gravity:3.71, escapeVelocityKms:5.03, densityGcm3:3.93, meanTempC:-65, tempNote:"From about −140 °C at the poles in winter to 20 °C at the equator at noon.", tempRangeC:[-140,20] },
+    orbit:{ semiMajorAxisAu:1.524, distanceMillionKm:228, periodDays:686.98, velocityKms:24.1, eccentricity:.0934, inclinationDeg:1.85, elements:{a:1.52371034,e:.09339410,i:1.84969142,L0:-4.55343205,Lrate:19140.30268499,peri:-23.94362959,node:49.55953891} },
+    rotation:{ periodHours:24.62, solarDayHours:24.66, axialTiltDeg:25.19, direction:"prograde", note:"A Martian day (a 'sol') is only 41 minutes longer than ours." },
+    moons:2, moonsNote:"Phobos and Deimos",
+    atmosphere:{ summary:"Thin and cold, with only about 0.6% of Earth's surface pressure.", pressure:"About 0.6% of Earth's", composition:[{gas:"Carbon dioxide",pct:95.3},{gas:"Nitrogen",pct:2.7},{gas:"Argon",pct:1.6},{gas:"Other",pct:.4}] },
+    interior:[{name:"Core",to:.54,color:"#f2a24a"},{name:"Mantle",to:.985,color:"#a9472a"},{name:"Crust",to:1,color:"#6e3a26"}],
+    speciality:"Home to Olympus Mons, a volcano about 22 km high (2.5× Everest), and Valles Marineris, a canyon about 4,000 km long.",
+    facts:["Rivers, lakes and deltas shaped its surface billions of years ago.","Global dust storms can hide the whole planet for weeks.","Its red colour comes from iron oxide, essentially rust.","Sunsets are blue because of how fine dust scatters light."],
+    unknowns:["Where did the water go?","Is there life, past or present?","What causes the methane spikes?"],
+    missions:[{name:"Viking 1 and 2",year:"1976",agency:"NASA",note:"First successful landers; searched for life."},{name:"Mars Orbiter Mission",year:"2014",agency:"ISRO",note:"India's first interplanetary mission."},{name:"Curiosity",year:"2012",agency:"NASA",note:"Found an ancient habitable lake environment."},{name:"Perseverance and Ingenuity",year:"2021",agency:"NASA",note:"Sampling Jezero crater; first powered flight on another planet."}],
+    mysteryIds:["mars-lost-water"], tags:["rover","water","dust","olympus mons","red planet"] },
+  { id:"jupiter", name:"Jupiter", order:5, kind:"planet", type:"Gas giant", color:"#d9a46b",
+    tagline:"More than twice the mass of all the other planets combined.",
+    physical:{ diameterKm:142984, massKg:1.898e27, massEarths:317.8, gravity:24.79, escapeVelocityKms:59.5, densityGcm3:1.33, meanTempC:-110, tempNote:"At the 1-bar level in the cloud tops.", tempRangeC:[-145,-108] },
+    orbit:{ semiMajorAxisAu:5.204, distanceMillionKm:778.5, periodDays:4332.59, velocityKms:13.1, eccentricity:.0489, inclinationDeg:1.3, elements:{a:5.20288700,e:.04838624,i:1.30439695,L0:34.39644051,Lrate:3034.74612775,peri:14.72847983,node:100.47390909} },
+    rotation:{ periodHours:9.93, solarDayHours:9.93, axialTiltDeg:3.13, direction:"prograde", note:"The fastest spinner: a day lasts under 10 hours." },
+    moons:97, moonsNote:"Official count as of 2025.",
+    atmosphere:{ summary:"Banded clouds of ammonia ice, with storms larger than Earth.", pressure:"No solid surface", composition:[{gas:"Hydrogen",pct:89.8},{gas:"Helium",pct:10.2}] },
+    interior:[{name:"Dilute core",to:.3,color:"#f4c27a"},{name:"Metallic hydrogen",to:.8,color:"#a85d2e"},{name:"Molecular hydrogen",to:.995,color:"#d9a46b"},{name:"Cloud tops",to:1,color:"#e8d3b0"}],
+    speciality:"Its Great Red Spot is a storm wider than Earth, watched for well over a century. Its magnetic field is the strongest of any planet.",
+    facts:["Ganymede, its largest moon, is bigger than Mercury.","Io is the most volcanically active body in the Solar System.","Europa is thought to hide a salty ocean under its ice.","Emits more heat than it receives from the Sun."],
+    unknowns:["How deep does the Great Red Spot go?","What is inside the core?","Is Europa's ocean habitable?"],
+    missions:[{name:"Galileo",year:"1995",agency:"NASA",note:"First Jupiter orbiter and atmospheric probe."},{name:"Juno",year:"2016",agency:"NASA",note:"Polar orbits measuring gravity, magnetism and deep clouds."},{name:"JUICE",year:"2023",agency:"ESA",note:"On its way to the icy moons; arrival in 2031."},{name:"Europa Clipper",year:"2024",agency:"NASA",note:"Due at Jupiter in 2030."}],
+    mysteryIds:["jupiter-red-spot","europa-ocean"], tags:["red spot","storm","gas giant","europa","io","ganymede"] },
+  { id:"saturn", name:"Saturn", order:6, kind:"planet", type:"Gas giant", color:"#e3c590",
+    tagline:"Light enough to float on water, wrapped in the most spectacular rings.",
+    physical:{ diameterKm:120536, massKg:5.68e26, massEarths:95.2, gravity:10.44, escapeVelocityKms:35.5, densityGcm3:.687, meanTempC:-140, tempNote:"At the 1-bar level in the cloud tops.", tempRangeC:[-178,-130] },
+    orbit:{ semiMajorAxisAu:9.582, distanceMillionKm:1433.5, periodDays:10759.22, velocityKms:9.7, eccentricity:.0565, inclinationDeg:2.5, elements:{a:9.53667594,e:.05386179,i:2.48599187,L0:49.95424423,Lrate:1222.49362201,peri:92.59887831,node:113.66242448} },
+    rotation:{ periodHours:10.66, solarDayHours:10.66, axialTiltDeg:26.73, direction:"prograde", note:"Spins so fast that it is visibly squashed at the poles." },
+    moons:274, moonsNote:"Official count as of 2025.",
+    atmosphere:{ summary:"Pale golden hydrogen-helium clouds with a hexagon-shaped jet stream around the north pole.", pressure:"No solid surface", composition:[{gas:"Hydrogen",pct:96.3},{gas:"Helium",pct:3.2},{gas:"Methane",pct:.5}] },
+    interior:[{name:"Rocky core",to:.2,color:"#f0c070"},{name:"Metallic hydrogen",to:.6,color:"#a8743a"},{name:"Molecular hydrogen",to:.995,color:"#d8b57a"},{name:"Cloud tops",to:1,color:"#ecd9b0"}],
+    speciality:"Its ring system spans about 280,000 km yet is mostly only tens of metres thick. It is the only planet less dense than water.",
+    facts:["Titan has a thicker atmosphere than Earth and lakes of liquid methane.","Enceladus sprays water from its south pole into space.","A six-sided storm sits over its north pole.","The rings are made mostly of water-ice particles."],
+    unknowns:["How old are the rings?","What lies beneath Titan's surface?","Is Enceladus's ocean habitable?"],
+    missions:[{name:"Voyager 1 and 2",year:"1980",agency:"NASA",note:"First close flybys."},{name:"Cassini–Huygens",year:"2004",agency:"NASA/ESA/ASI",note:"13 years in orbit; Huygens landed on Titan in 2005."},{name:"Dragonfly",year:"planned",agency:"NASA",note:"Rotorcraft lander for Titan, planned for a 2028 launch."}],
+    mysteryIds:["saturn-rings-age"], tags:["rings","titan","enceladus","hexagon"] },
+  { id:"uranus", name:"Uranus", order:7, kind:"planet", type:"Ice giant", color:"#9fd6e0",
+    tagline:"The planet that rolls around the Sun on its side.",
+    physical:{ diameterKm:51118, massKg:8.68e25, massEarths:14.5, gravity:8.69, escapeVelocityKms:21.3, densityGcm3:1.27, meanTempC:-195, tempNote:"The coldest planetary atmosphere recorded, about −224 °C at its minimum.", tempRangeC:[-224,-195] },
+    orbit:{ semiMajorAxisAu:19.201, distanceMillionKm:2872.5, periodDays:30688.5, velocityKms:6.8, eccentricity:.0457, inclinationDeg:.8, elements:{a:19.18916464,e:.04725744,i:.77263783,L0:313.23810451,Lrate:428.48202785,peri:170.95427630,node:74.01692503} },
+    rotation:{ periodHours:17.24, solarDayHours:17.24, axialTiltDeg:97.77, direction:"retrograde", note:"Tilted 98°, so each pole gets about 42 years of sunlight, then 42 years of darkness." },
+    moons:29, moonsNote:"Official count as of 2025.",
+    atmosphere:{ summary:"Hydrogen and helium with methane, which absorbs red light and gives the blue-green colour.", pressure:"No solid surface", composition:[{gas:"Hydrogen",pct:82.5},{gas:"Helium",pct:15.2},{gas:"Methane",pct:2.3}] },
+    interior:[{name:"Rocky core",to:.25,color:"#cfd8dc"},{name:"Icy mantle",to:.75,color:"#5fb4c9"},{name:"Hydrogen–helium envelope",to:1,color:"#9fd6e0"}],
+    speciality:"An axial tilt of about 98° makes it rotate like a rolling ball. It also has an oddly lopsided, off-centre magnetic field.",
+    facts:["Discovered in 1781 by William Herschel.","A season lasts about 21 years.","Has at least 13 faint rings.","Has only ever been visited once, by Voyager 2 in 1986."],
+    unknowns:["What caused the extreme tilt?","Why does it radiate so little internal heat?"],
+    missions:[{name:"Voyager 2",year:"1986",agency:"NASA",note:"The only flyby so far."},{name:"Uranus Orbiter and Probe",year:"proposed",agency:"NASA",note:"Top-priority flagship mission recommended by the 2022 US planetary decadal survey."}],
+    mysteryIds:["uranus-tilt"], tags:["tilt","ice giant","rings","methane"] },
+  { id:"neptune", name:"Neptune", order:8, kind:"planet", type:"Ice giant", color:"#4a6fe0",
+    tagline:"The windiest world, found by mathematics before anyone saw it.",
+    physical:{ diameterKm:49528, massKg:1.02e26, massEarths:17.1, gravity:11.15, escapeVelocityKms:23.5, densityGcm3:1.64, meanTempC:-200, tempNote:"At the 1-bar level in the cloud tops.", tempRangeC:[-218,-200] },
+    orbit:{ semiMajorAxisAu:30.047, distanceMillionKm:4495.1, periodDays:60182, velocityKms:5.4, eccentricity:.0113, inclinationDeg:1.8, elements:{a:30.06992276,e:.00859048,i:1.77004347,L0:-55.12002969,Lrate:218.45945325,peri:44.96476227,node:131.78422574} },
+    rotation:{ periodHours:16.11, solarDayHours:16.11, axialTiltDeg:28.32, direction:"prograde", note:"" },
+    moons:16, moonsNote:"Official count as of 2025.",
+    atmosphere:{ summary:"Hydrogen and helium with methane. Winds reach about 2,100 km/h.", pressure:"No solid surface", composition:[{gas:"Hydrogen",pct:80},{gas:"Helium",pct:19},{gas:"Methane",pct:1.5}] },
+    interior:[{name:"Rocky core",to:.25,color:"#cfd8dc"},{name:"Icy mantle",to:.75,color:"#3a5fc9"},{name:"Hydrogen–helium envelope",to:1,color:"#4a6fe0"}],
+    speciality:"Winds near 2,100 km/h, faster than the speed of sound on Earth. Predicted from the pull on Uranus's orbit before it was ever seen, in 1846.",
+    facts:["Completed its first orbit since discovery in 2011.","Its moon Triton orbits backwards.","Triton has nitrogen geysers despite temperatures near −235 °C.","Has been visited only once, by Voyager 2 in 1989."],
+    unknowns:["Why does it radiate far more internal heat than Uranus?","Is there a more distant planet in the outer Solar System?"],
+    missions:[{name:"Voyager 2",year:"1989",agency:"NASA",note:"The only flyby; discovered the Great Dark Spot and Triton's geysers."}],
+    mysteryIds:["planet-nine"], tags:["wind","triton","ice giant","dark spot"] },
+];
+const C_KMS = 299792.458;
+for (const b of PLANETS) {
+  const d = b.physical.diameterKm;
+  const rotH = Math.abs(b.rotation.periodHours);
+  b.derived = {
+    equatorialSpeedKmh: Math.round((Math.PI * d) / rotH),
+    orbitalVelocityKmh: b.orbit.velocityKms ? Math.round(b.orbit.velocityKms * 3600) : null,
+    yearEarthYears: b.orbit.periodDays ? +(b.orbit.periodDays / 365.25).toFixed(3) : null,
+    lightMinutesFromSun: b.orbit.distanceMillionKm ? +((b.orbit.distanceMillionKm * 1e6) / C_KMS / 60).toFixed(2) : 0,
+    dayLengthEarthDays: +(Math.abs(b.rotation.solarDayHours) / 24).toFixed(2),
+  };
+}
+const MOON_INTERIORS = {
+  europa:[{name:"Ice shell (15–25 km)",to:.28,color:"#e0ecff"},{name:"Salty ocean (~100 km)",to:.68,color:"#2b7ac6"},{name:"Rocky seafloor",to:1,color:"#4a3424"}],
+  enceladus:[{name:"Ice shell",to:.22,color:"#eaf4ff"},{name:"Global ocean",to:.72,color:"#2b9cd6"},{name:"Rocky core",to:1,color:"#5a4030"}],
+  titan:[{name:"Atmosphere",to:.15,color:"#f0d6a0"},{name:"Ice crust",to:.4,color:"#c8d8ea"},{name:"Water ocean",to:.8,color:"#3a7ec6"},{name:"Rocky core",to:1,color:"#5a4030"}],
+};
+
+const MYSTERIES = [
+  { id:"venus-greenhouse", title:"Did Venus once have oceans?", planetId:"venus", category:"Climate", status:"leading-theory",
+    question:"Venus is almost Earth's size, yet it ended up with a 464 °C surface. What went wrong, and when?",
+    summary:"Most scientists think a runaway greenhouse effect boiled away any early water. Whether Venus ever had oceans is still debated.",
+    visual:{type:"greenhouse"},
+    know:["Surface pressure is about 92 times Earth's, and the air is about 96.5% carbon dioxide.","Venus's deuterium-to-hydrogen ratio is about 100 times Earth's, a sign that lots of hydrogen, probably from water, escaped to space.","Thick clouds of sulfuric acid trap heat and hide the surface."],
+    theories:[{name:"Runaway greenhouse",status:"leading",text:"As the young Sun brightened, Venus warmed until oceans evaporated. Water vapour trapped more heat, and sunlight split the vapour so hydrogen escaped."},{name:"A long-lived habitable Venus",status:"competing",text:"Some climate models suggest slow rotation could have let liquid oceans persist for billions of years before a sudden collapse."},{name:"Always dry",status:"competing",text:"Other models suggest clouds on the dayside kept the young planet too hot for oceans to ever condense."}],
+    research:[{year:"1978",who:"Pioneer Venus",finding:"Measured the high deuterium-to-hydrogen ratio."},{year:"1990–94",who:"Magellan",finding:"Radar-mapped the surface."},{year:"2016",who:"Way et al.",finding:"Climate models for an early habitable Venus."},{year:"2021",who:"Turbet et al.",finding:"Models suggesting early oceans could not condense."}],
+    next:["ESA's EnVision radar orbiter is planned for the early 2030s.","Measuring the lower atmosphere would test the ocean idea directly."],
+    tags:["venus","ocean","water","greenhouse","climate","hot"] },
+  { id:"solar-corona", title:"Why is the Sun's atmosphere hotter than its surface?", planetId:"sun", category:"Stars", status:"partly-solved",
+    question:"The Sun's visible surface is about 5,500 °C, yet the corona above it exceeds 1 million °C. What heats it?",
+    summary:"Magnetic energy is the likely source. Two families of ideas, nanoflares and magnetic waves, are being tested by spacecraft that fly through the corona.",
+    visual:{type:"corona"},
+    know:["Temperature falls to about 4,000 °C just above the surface, then climbs to over a million degrees within a few thousand kilometres.","The corona is very thin.","Magnetic loops rooted in the surface carry energy upward."],
+    theories:[{name:"Nanoflares",status:"leading",text:"Countless tiny magnetic explosions each release a little heat, adding up to a hot corona."},{name:"Alfvén waves",status:"leading",text:"Waves running along magnetic field lines carry energy up and dump it in the corona."},{name:"Magnetic jets (spicules)",status:"competing",text:"Jets of plasma may deliver heat as they shoot up from the surface."}],
+    research:[{year:"1939–43",who:"Grotrian and Edlén",finding:"Showed the corona's lines come from iron stripped of many electrons."},{year:"1988",who:"Eugene Parker",finding:"Proposed that nanoflares heat the corona."},{year:"2020",who:"Solar Orbiter",finding:"Imaged small 'campfire' flares."},{year:"2021",who:"Parker Solar Probe",finding:"Crossed the corona's outer boundary."}],
+    next:["Parker Solar Probe keeps making closer passes.","Aditya-L1 and Solar Orbiter will compare heating events directly."],
+    tags:["sun","corona","temperature","magnetic","flare","star"] },
+  { id:"jupiter-red-spot", title:"How has Jupiter's Great Red Spot lasted so long?", planetId:"jupiter", category:"Weather", status:"partly-solved",
+    question:"Storms on Earth die in days or weeks. Jupiter's Great Red Spot has been watched for well over a century.",
+    summary:"Jupiter has no solid surface to slow the storm down, and the spot is fed by smaller storms. Juno showed it reaches hundreds of kilometres below the cloud tops.",
+    visual:{type:"redspot"},
+    know:["It is an anticyclone, with winds up to about 430 km/h.","It was about 39,000 km wide in the late 1800s and about 16,500 km by 2014.","Juno's gravity data suggest it extends about 300–500 km below the clouds."],
+    theories:[{name:"Fed by smaller storms",status:"leading",text:"Merging with small vortices keeps adding energy and spin."},{name:"No friction from a surface",status:"leading",text:"With no solid ground to slow it, the vortex loses energy very slowly."},{name:"Today's spot is a newer storm",status:"competing",text:"Historical records suggest the spot seen now may have formed in the 1800s."}],
+    research:[{year:"1831",who:"Schwabe",finding:"Earliest confirmed drawing of the spot."},{year:"1979",who:"Voyager 1 and 2",finding:"First close images of its internal structure."},{year:"2019",who:"Juno",finding:"Gravity measurements of its depth."},{year:"2024",who:"Simon et al.",finding:"Records analysis suggesting the current spot formed in the 19th century."}],
+    next:["Juno's continued orbits and Hubble's yearly images track its size and colour."],
+    tags:["jupiter","storm","red spot","weather","vortex"] },
+  { id:"uranus-tilt", title:"Why does Uranus orbit on its side?", planetId:"uranus", category:"Formation", status:"leading-theory",
+    question:"Most planets spin nearly upright. Uranus is tilted about 98°, so it rolls along its orbit. What knocked it over?",
+    summary:"A giant collision early in its history is the leading explanation, though simulations also allow several smaller impacts.",
+    visual:{type:"impact",mode:"tilt"},
+    know:["Its rotation axis lies almost in the plane of its orbit.","Its magnetic field is tilted about 59° from the spin axis.","Its moons and rings orbit in the same tilted plane."],
+    theories:[{name:"One giant impact",status:"leading",text:"A planet-sized body, a few Earth masses, struck Uranus and tipped it over."},{name:"Multiple impacts",status:"competing",text:"Several smaller collisions could add up, and may better explain its moons."},{name:"A lost giant moon",status:"speculative",text:"Gravity between a massive early moon and the planet could have tilted it before the moon escaped."}],
+    research:[{year:"1986",who:"Voyager 2",finding:"Revealed the tilted magnetic field and ring-moon system."},{year:"1992",who:"Slattery et al.",finding:"First giant-impact simulations."},{year:"2018",who:"Kegerreise et al.",finding:"Detailed simulations of impacts on early Uranus."},{year:"2022",who:"US Decadal Survey",finding:"Named a Uranus orbiter and probe the top priority."}],
+    next:["A dedicated orbiter could measure Uranus's interior, helping to test impact models."],
+    tags:["uranus","tilt","impact","collision","formation","ice giant"] },
+  { id:"mars-lost-water", title:"Where did Mars's water go?", planetId:"mars", category:"Climate", status:"partly-solved",
+    question:"Rivers, lakes and deltas show Mars was once wet. Today it is a cold, dry desert. Where did the water and the air go?",
+    summary:"Some escaped to space, stripped away by the solar wind, and a large share is probably locked in minerals and underground ice.",
+    visual:{type:"marsloss"},
+    know:["Orbiters and rovers see dry river valleys, deltas and minerals that form in water.","Mars has no global magnetic field today, so the solar wind can strip its atmosphere.","MAVEN measured atmospheric loss at roughly 100 grams per second."],
+    theories:[{name:"Escape to space",status:"leading",text:"With weak gravity and no magnetic field, the solar wind removed most of the early atmosphere."},{name:"Locked in the crust",status:"leading",text:"Water reacted with rock to form hydrated minerals."},{name:"Deep liquid reservoir",status:"speculative",text:"A 2024 analysis of InSight seismic data suggested liquid water may exist deep in the mid-crust."}],
+    research:[{year:"2012",who:"Curiosity",finding:"Found an ancient stream bed and habitable lake sediments."},{year:"2015",who:"MAVEN",finding:"Measured atmospheric loss to space."},{year:"2021",who:"Scheller et al.",finding:"Estimated much of Mars's early water is now in its crust."},{year:"2024",who:"InSight analysis",finding:"Seismic hints of deep liquid water."}],
+    next:["Perseverance is collecting samples from an ancient delta for a possible future return to Earth."],
+    tags:["mars","water","atmosphere","solar wind","rover","dry"] },
+  { id:"planet-nine", title:"Is there another giant planet beyond Neptune?", planetId:"neptune", category:"Outer Solar System", status:"hypothesis",
+    question:"Several distant icy bodies have orbits that bunch together in an unexpected way. Is a hidden planet pulling on them?",
+    summary:"A hypothetical planet of a few to ten Earth masses could explain the pattern, but no one has seen it.",
+    visual:{type:"planetnine"},
+    know:["Objects like Sedna have orbits that never come near Neptune.","The predicted planet would be hundreds of AU from the Sun.","Surveys have found few such objects, so statistics are uncertain."],
+    theories:[{name:"Planet Nine",status:"competing",text:"A planet roughly 5–10 Earth masses, far beyond Neptune, aligns the orbits."},{name:"Observational bias",status:"competing",text:"The clustering may be a quirk of when and where telescopes could look."},{name:"Other explanations",status:"speculative",text:"The combined gravity of many small bodies, or even a small primordial black hole, have also been suggested."}],
+    research:[{year:"2014",who:"Sheppard and Trujillo",finding:"Pointed out clustering among distant objects."},{year:"2016",who:"Batygin and Brown",finding:"Proposed Planet Nine as the cause."},{year:"2017",who:"OSSOS survey",finding:"Found that observing bias could mimic the clustering."}],
+    next:["The Vera C. Rubin Observatory's decade-long survey should test the idea."],
+    tags:["planet nine","kuiper belt","neptune","orbit","sedna","hypothesis"] },
+  { id:"europa-ocean", title:"Is there an ocean under Europa's ice?", planetId:"jupiter", category:"Moons", status:"leading-theory",
+    question:"Europa is a little smaller than our Moon, with a cracked icy surface. Is there a deep salty ocean beneath?",
+    summary:"Magnetic data and surface features strongly suggest a global ocean with more water than all of Earth's oceans.",
+    visual:{type:"interior",body:"europa"},
+    know:["Galileo's magnetometer saw a field consistent with a salty conducting layer beneath the ice.","The ice shell is estimated to be roughly 15–25 km thick.","JWST detected carbon dioxide on the surface that may have come from the ocean."],
+    theories:[{name:"Global ocean",status:"leading",text:"A continuous salty ocean in contact with a rocky seafloor, heated by tidal flexing."},{name:"Pockets of liquid in the ice",status:"competing",text:"Shallow lakes in a thick shell could explain surface features without a deep ocean."},{name:"Occasional plumes",status:"speculative",text:"Hubble hints of water vapour above the south pole are still debated."}],
+    research:[{year:"1995–2003",who:"Galileo",finding:"Magnetic field evidence for a conducting layer."},{year:"2012–16",who:"Hubble",finding:"Possible plume detections."},{year:"2023",who:"JWST",finding:"Carbon dioxide on the surface."}],
+    next:["Europa Clipper arrives at Jupiter in 2030 and will make about 50 flybys."],
+    tags:["europa","ocean","ice","moon","jupiter","life","tidal"] },
+  { id:"moon-origin", title:"Where did the Moon come from?", planetId:"earth", category:"Formation", status:"leading-theory",
+    question:"The Moon is unusually large for our planet and chemically almost identical to Earth's mantle. How did it form?",
+    summary:"The giant-impact model fits many facts, but it struggles to explain why the Moon looks so much like Earth.",
+    visual:{type:"impact",mode:"moon"},
+    know:["Apollo astronauts returned about 382 kg of lunar rock and soil.","Moon rocks have oxygen isotope ratios nearly the same as Earth's.","The Moon is about 4.5 billion years old."],
+    theories:[{name:"Giant impact (Theia)",status:"leading",text:"A Mars-sized body hit the young Earth; the debris disc merged into the Moon."},{name:"Synestia",status:"competing",text:"A vigorous impact vaporised parts of Earth into a doughnut-shaped cloud from which the Moon condensed."},{name:"Fast-spinning Earth",status:"competing",text:"A faster-spinning early Earth could have mixed the material more thoroughly."}],
+    research:[{year:"1969–72",who:"Apollo",finding:"Samples returned to labs on Earth."},{year:"1975–76",who:"Hartmann, Davis, Cameron, Ward",finding:"Proposed the giant-impact idea."},{year:"2017–18",who:"Lock, Stewart and colleagues",finding:"The synestia model."}],
+    next:["New lunar samples from Chang'e missions and future Artemis landings will refine the models."],
+    tags:["moon","earth","impact","theia","formation","apollo"] },
+  { id:"mercury-core", title:"Why does Mercury have such a huge iron core?", planetId:"mercury", category:"Formation", status:"open",
+    question:"Mercury's iron core is about 85% of the planet's radius, far larger than Earth's share. Why?",
+    summary:"Three ideas compete: a collision stripped away its rocky shell, the young Sun vaporised it, or the planet formed from iron-rich material.",
+    visual:{type:"interior",body:"mercury"},
+    know:["The core makes up roughly 55% of Mercury's volume.","MESSENGER found a surface rich in potassium and sulfur, which would be easily lost in a violent impact.","Mercury's core is at least partly molten and generates a weak magnetic field."],
+    theories:[{name:"Giant impact",status:"competing",text:"A collision stripped a thick rocky mantle."},{name:"Evaporation by the young Sun",status:"competing",text:"Extreme early heat vaporised the outer rock."},{name:"Iron-rich building blocks",status:"competing",text:"The material that formed Mercury was already rich in iron."}],
+    research:[{year:"1974–75",who:"Mariner 10",finding:"First close look; discovered the magnetic field."},{year:"2011–15",who:"MESSENGER",finding:"Measured the surface composition and gravity."},{year:"2026",who:"BepiColombo",finding:"Due to enter Mercury orbit in November 2026."}],
+    next:["BepiColombo's two orbiters will map the field, interior and surface at high resolution."],
+    tags:["mercury","core","iron","magnetic","formation","interior"] },
+  { id:"saturn-rings-age", title:"How old are Saturn's rings?", planetId:"saturn", category:"Rings", status:"open",
+    question:"Saturn's rings look bright and clean, which suggests they are young. But the planet is 4.5 billion years old.",
+    summary:"Cassini measured a light mass for the rings, pointing to a young age. A 2024 study argued that ring particles may resist darkening.",
+    visual:{type:"rings"},
+    know:["The rings are 95–99% water ice and are mostly tens of metres thick, but span about 280,000 km.","Cassini's final orbits measured the ring mass at about 40% of the moon Mimas.","Dust from space slowly darkens the ice."],
+    theories:[{name:"Young rings (~100 million years)",status:"leading",text:"Rings formed recently from a destroyed moon or comet."},{name:"Old rings that resist dust",status:"competing",text:"Impacts may vaporise dust rather than mix it in."},{name:"Lost moon",status:"competing",text:"A moon may have been pulled apart by Saturn's gravity."}],
+    research:[{year:"2017",who:"Cassini",finding:"Final orbits measured the ring mass."},{year:"2019",who:"Iess et al.",finding:"Reported a young age from the mass estimate."},{year:"2022",who:"Wisdom et al.",finding:"A lost moon could explain young rings and Saturn's tilt."},{year:"2024",who:"Hyodo et al.",finding:"Ring particles may resist pollution."}],
+    next:["Ring measurements from Earth-based telescopes and JWST continue to refine the mass and composition."],
+    tags:["saturn","rings","age","ice","cassini","moon"] },
+];
+
+const LIFE = [
+  { id:"enceladus-plumes", title:"Enceladus: a moon that sprays its ocean into space", category:"Habitat", where:"Saturn's moon Enceladus", planetId:"saturn", year:"2005–2023", level:4,
+    headline:"Cassini flew through the jets and tasted the water.",
+    summary:"Geysers at Enceladus's south pole carry material from a salty ocean beneath the ice. Cassini found water, salts, molecular hydrogen, complex organic molecules and phosphates.",
+    found:["Water vapour and ice grains from a subsurface ocean.","Molecular hydrogen, a possible chemical energy source for microbes.","Complex organic molecules (2018) and phosphates (2023)."],
+    debated:["These are signs of a habitable environment, not of life itself.","It is unknown whether the chemistry is active enough to support organisms."],
+    next:["Proposed missions would fly through the plumes again with better instruments."],
+    visual:{type:"plume"}, tags:["enceladus","saturn","ocean","plume","moon","organics"],
+    sources:[{label:"Waite et al., Science, 2017"},{label:"Postberg et al., Nature, 2018"},{label:"Postberg et al., Nature, 2023"}] },
+  { id:"europa-life", title:"Europa: an ocean with more water than Earth", category:"Habitat", where:"Jupiter's moon Europa", planetId:"jupiter", year:"1995–2030", level:4,
+    headline:"Strong indirect evidence for a deep ocean.",
+    summary:"Europa's ocean, if confirmed, would sit on a rocky seafloor and be kept warm by tidal heating — one of the best places to look for life.",
+    found:["Magnetic signature of a conducting salty layer.","Cracked, young-looking ice surface.","Carbon dioxide on the surface detected by JWST."],
+    debated:["The ocean's depth and thickness of the ice are uncertain.","Whether the seafloor is chemically active is unknown."],
+    next:["Europa Clipper (arrives 2030) will measure the ice, the ocean and the surface chemistry."],
+    visual:{type:"interior",body:"europa"}, tags:["europa","ocean","moon","jupiter","habitable"],
+    sources:[{label:"Kivelson et al., Science, 2000"},{label:"Villanueva et al., Science, 2023"}] },
+  { id:"titan-chemistry", title:"Titan: a world of organic chemistry", category:"Habitat", where:"Saturn's moon Titan", planetId:"saturn", year:"2005–2034", level:4,
+    headline:"Rain, rivers and lakes of liquid methane.",
+    summary:"Titan has a thick nitrogen atmosphere and rich organic chemistry on its surface. Any life there would have to be very different from ours.",
+    found:["Lakes and seas of liquid methane and ethane.","A thick atmosphere that makes complex organic molecules.","A probable subsurface water ocean."],
+    debated:["Whether liquid water ever meets the organic material on the surface.","Whether life could use methane instead of water as a solvent is purely theoretical."],
+    next:["NASA's Dragonfly rotorcraft is planned to launch in 2028 and reach Titan in the mid-2030s."],
+    visual:{type:"interior",body:"titan"}, tags:["titan","saturn","methane","organics","lake","atmosphere"],
+    sources:[{label:"Cassini–Huygens mission results"},{label:"NASA Dragonfly mission documents"}] },
+  { id:"mars-habitat", title:"Mars: an ancient habitable environment", category:"Habitat", where:"Mars, Gale and Jezero craters", planetId:"mars", year:"2012–present", level:4,
+    headline:"Rovers found a lake where microbes could have lived.",
+    summary:"Curiosity found ancient lake sediments with the elements and energy sources life needs. Perseverance is exploring an old river delta.",
+    found:["Ancient lake and river deposits.","Carbon, nitrogen, sulfur and other building-block elements.","Organic molecules preserved in old mudstone."],
+    debated:["Habitable does not mean inhabited.","Whether life ever began on Mars remains unknown."],
+    next:["Perseverance's collected samples may be returned to Earth in a future mission."],
+    visual:{type:"greenhouse"}, tags:["mars","habitable","lake","rover","organics"],
+    sources:[{label:"Curiosity and Perseverance science team publications"}] },
+  { id:"mars-biosignature", title:"Mars: 'leopard spots' on a rock", category:"Chemical signal", where:"Mars, Jezero crater", planetId:"mars", year:"2024–2025", level:3,
+    headline:"A potential biosignature, not proof.",
+    summary:"Perseverance drilled a rock with pale spots ringed by dark material. The chemistry resembles reactions that, on Earth, can be driven by microbes.",
+    found:["Patterns of iron and phosphorus minerals around the spots.","Organic carbon in the rock.","Evidence the rock formed in water."],
+    debated:["Chemical reactions without life can produce similar minerals.","Confirmation needs lab study of the sample on Earth."],
+    next:["Bringing the sample to Earth is the key test."],
+    visual:{type:"marsloss"}, tags:["mars","biosignature","perseverance","rock","potential life"],
+    sources:[{label:"Hurowitz et al., Nature, 2025"}] },
+  { id:"mars-methane", title:"Mars: methane that comes and goes", category:"Chemical signal", where:"Mars atmosphere", planetId:"mars", year:"2003–present", level:3,
+    headline:"Different instruments disagree.",
+    summary:"On Earth most methane comes from life, though geology produces some too. Curiosity has seen seasonal methane changes and occasional spikes, while an orbiter found almost none.",
+    found:["Curiosity measured seasonal variation and spikes at Gale crater.","The ExoMars Trace Gas Orbiter reported very low methane in the atmosphere."],
+    debated:["Why the results disagree is unknown.","Even if confirmed, methane alone would not prove life."],
+    next:["More measurements at different times of day and place, and sample return."],
+    visual:{type:"spectrum",gas:"methane"}, tags:["mars","methane","atmosphere","life","gas"],
+    sources:[{label:"Webster et al., Science, 2018"},{label:"Korablev et al., Nature, 2019"}] },
+  { id:"venus-phosphine", title:"Venus: a disputed gas in the clouds", category:"Chemical signal", where:"Venus cloud layer", planetId:"venus", year:"2020–present", level:3,
+    headline:"A claimed detection that others could not confirm.",
+    summary:"In 2020 astronomers reported phosphine, a gas linked with life on Earth, in Venus's clouds. Reanalyses found the signal weaker or absent.",
+    found:["A claimed absorption line at a wavelength expected for phosphine in radio data."],
+    debated:["Data-processing choices strongly affected the signal.","Independent datasets found no clear detection."],
+    next:["Direct sampling of the clouds by a probe would settle the question."],
+    visual:{type:"spectrum",gas:"phosphine"}, tags:["venus","phosphine","clouds","gas","life"],
+    sources:[{label:"Greaves et al., Nature Astronomy, 2020"}] },
+  { id:"k2-18b", title:"K2-18 b: a possible sign in a distant atmosphere", category:"Chemical signal", where:"Exoplanet K2-18 b, about 120 light-years away", planetId:null, year:"2023–2025", level:3,
+    headline:"A tentative hint that independent teams do not all accept.",
+    summary:"Webb detected methane and carbon dioxide in the atmosphere of K2-18 b. A team reported a hint of dimethyl sulfide, but other teams found the evidence weak.",
+    found:["Methane and carbon dioxide in the planet's atmosphere (broadly accepted).","A weak hint of dimethyl sulfide-like molecules (not accepted by all)."],
+    debated:["The statistical significance is low and depends on the analysis method.","Even if present, non-biological sources are possible."],
+    next:["More Webb observations are needed."],
+    visual:{type:"spectrum",gas:"dms"}, tags:["exoplanet","k2-18b","dms","webb","life"],
+    sources:[{label:"Madhusudhan et al., ApJL, 2023 and 2025"},{label:"Independent reanalyses, 2025"}] },
+  { id:"wow-signal", title:"The 'Wow!' signal", category:"Radio signal", where:"Constellation Sagittarius direction", planetId:null, year:"1977", level:3,
+    headline:"72 seconds of a narrow radio signal that never returned.",
+    summary:"On 15 August 1977 Ohio State University's Big Ear telescope recorded a strong narrow-band signal near the hydrogen line. It has never been seen again.",
+    found:["A signal about 30 times stronger than the background, lasting 72 seconds.","The data print-out reads 6EQUJ5, each character a signal strength level."],
+    debated:["Natural sources such as a flare have been proposed, but none is confirmed.","A single detection that is not repeated cannot be verified."],
+    next:["Modern radio searches continue to scan for narrow-band signals."],
+    visual:{type:"signal"}, tags:["wow signal","seti","radio","alien","signal"],
+    sources:[{label:"Ohio State Big Ear data, 1977"}] },
+  { id:"oumuamua", title:"'Oumuamua: the first interstellar visitor", category:"Interstellar object", where:"Passed through the inner Solar System, 2017", planetId:null, year:"2017–present", level:1,
+    headline:"An odd shape, an odd push, and a lot of caution.",
+    summary:"'Oumuamua was spotted in October 2017. It sped up slightly without a visible tail. Natural explanations exist; the artificial idea is not supported by the evidence.",
+    found:["Elongated or flat shape, tumbling.","A small extra acceleration unexplained by gravity.","No visible dust or gas cloud."],
+    debated:["Natural explanations fit most of the data.","The technology idea is speculative."],
+    next:["Future surveys will find more interstellar visitors to compare."],
+    visual:{type:"trajectory"}, tags:["oumuamua","interstellar","alien","comet","speculation"],
+    sources:[{label:"Meech et al., Nature, 2017"},{label:"Micheli et al., Nature, 2018"}] },
+  { id:"drake-equation", title:"The Drake equation and the Fermi paradox", category:"Theory", where:"Our galaxy", planetId:null, year:"1950–1961", level:2,
+    headline:"A framework for the question, not an answer.",
+    summary:"Frank Drake's 1961 equation multiplies several uncertain factors to estimate how many civilisations might exist. Fermi's paradox asks why we see none.",
+    found:["Some inputs, such as the rate of star formation, are measured.","The fraction of planets that develop life, and then intelligence, is unknown."],
+    debated:["Results range from far less than one civilisation to millions, depending on assumptions."],
+    next:["Finding even one independent origin of life would sharply narrow the numbers."],
+    visual:{type:"drake"}, tags:["drake","fermi","alien","civilisation","seti"],
+    sources:[{label:"Drake, 1961"},{label:"Fermi, 1950"}] },
+  { id:"earth-extremes", title:"Life at the extremes on Earth", category:"Earth analogue", where:"Earth", planetId:"earth", year:"Ongoing", level:null,
+    headline:"Where life survives tells us where to look.",
+    summary:"Microbes live at 122 °C, under a kilometre of ice and a thousand times atmospheric pressure. Tardigrades survived 10 days exposed to the vacuum of space.",
+    found:["Microbes growing at up to 122 °C near deep-sea vents.","Radiation-resistant bacteria that survive thousands of grays.","Tardigrades that survived exposure to space in orbit in 2007."],
+    debated:["Surviving is not the same as thriving."],
+    next:["Studying them helps design experiments for Mars, Europa and Enceladus."],
+    visual:{type:"corona"}, tags:["extremophile","tardigrade","vent","earth","life","microbe"],
+    sources:[{label:"Jönsson et al., Current Biology, 2008"}] },
+];
+
+const TEAM = [
+  { id:"t1", name:"Add your name", role:"Product & Science Lead", bio:"Owns the story, the science accuracy and the roadmap." },
+  { id:"t2", name:"Add your name", role:"Frontend Engineer", bio:"Builds the interface, accessibility and page performance." },
+  { id:"t3", name:"Add your name", role:"3D & Graphics Engineer", bio:"Creates the planet renders and cinematic hero scenes." },
+  { id:"t4", name:"Add your name", role:"Backend Engineer", bio:"Designs the API, search and data pipeline." },
+  { id:"t5", name:"Add your name", role:"UX & Visual Designer", bio:"Shapes the design system and the user journey." },
+];
+
+/* ============ UTILITIES ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = (n, d = 0) => (n == null || Number.isNaN(n) ? '—' : n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }));
+function hoursLabel(h) {
+  const a = Math.abs(h);
+  if (a >= 48) return `${fmt(a / 24, a / 24 < 10 ? 1 : 0)} days`;
+  const hh = Math.floor(a), mm = Math.round((a - hh) * 60);
+  return mm === 60 ? `${hh + 1} h` : `${hh} h ${mm} min`;
+}
+function yearsLabel(days) {
+  if (days == null) return '—';
+  if (days < 730) return `${fmt(days, days < 100 ? 1 : 0)} days`;
+  const y = days / 365.25;
+  return `${fmt(y, y < 20 ? 1 : 0)} years`;
+}
+function dateLabel(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function sci(n, digits = 2) {
+  if (!n) return '0';
+  const e = Math.floor(Math.log10(Math.abs(n)));
+  const m = n / 10 ** e;
+  const sup = String(e).replace(/-/g, '⁻').replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+  return `${m.toFixed(digits)} × 10${sup}`;
+}
+let toastTimer;
+function toast(msg) {
+  const el = $('#toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* Reveal: JS opts elements into the animation, then either observes them
+   or reveals them via a safety timeout. Nothing can stay hidden forever. */
+function initReveal() {
+  const els = $$('.reveal, .sweep');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window) || reducedMotion()) {
+    els.forEach((e) => e.classList.add('is-in'));
+    return;
+  }
+  els.forEach((e) => e.classList.add('pre-anim'));
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach((e) => io.observe(e));
+  // Safety net — force-show anything visible after 1.5s regardless of the observer
+  setTimeout(() => {
+    els.forEach((e) => {
+      if (e.classList.contains('is-in')) return;
+      const r = e.getBoundingClientRect();
+      if (r.top < innerHeight + 200 && r.bottom > -200) e.classList.add('is-in');
+    });
+  }, 1500);
+  // Absolute fallback: after 4s, reveal everything regardless of position
+  setTimeout(() => els.forEach((e) => e.classList.add('is-in')), 4000);
+}
+
+/* ============ KEPLER ============ */
+const AU_KM = 149597870.7;
+const MU_SUN = 1.32712440018e11;
+const rad = (d) => (d * Math.PI) / 180;
+const julianDate = (date) => date.getTime() / 86400000 + 2440587.5;
+function solveKepler(M, e) {
+  let E = e < 0.8 ? M : Math.PI;
+  for (let i = 0; i < 12; i++) {
+    const d = (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+    E -= d;
+    if (Math.abs(d) < 1e-9) break;
+  }
+  return E;
+}
+function position(el, date) {
+  const T = (julianDate(date) - 2451545.0) / 36525;
+  const L = el.L0 + el.Lrate * T;
+  const M = rad((((L - el.peri) % 360) + 540) % 360 - 180);
+  const E = solveKepler(M, el.e);
+  const nu = 2 * Math.atan2(Math.sqrt(1 + el.e) * Math.sin(E / 2), Math.sqrt(1 - el.e) * Math.cos(E / 2));
+  const r = el.a * (1 - el.e * Math.cos(E));
+  const lon = nu + rad(el.peri);
+  const speed = Math.sqrt(MU_SUN * (2 / (r * AU_KM) - 1 / (el.a * AU_KM)));
+  return { r, lon, x: r * Math.cos(lon), y: r * Math.sin(lon), speed };
+}
+function orbitPath(el, steps = 180) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const nu = (i / steps) * Math.PI * 2;
+    const r = (el.a * (1 - el.e * el.e)) / (1 + el.e * Math.cos(nu));
+    const lon = nu + rad(el.peri);
+    pts.push({ r, lon });
+  }
+  return pts;
+}
+
+/* ============ THREE ============ */
+const TEX_BASE = "https://raw.githubusercontent.com/jeromeetienne/threex.planets/master/images/";
+const TEXTURE_FILES = {
+  sun:{map:"sunmap.jpg"}, mercury:{map:"mercurymap.jpg"}, venus:{map:"venusmap.jpg"},
+  earth:{map:"earthmap1k.jpg",clouds:"earthcloudmaptrans.jpg"}, mars:{map:"marsmap1k.jpg"},
+  jupiter:{map:"jupitermap.jpg"}, saturn:{map:"saturnmap.jpg",ring:"saturnringcolor.jpg"},
+  uranus:{map:"uranusmap.jpg"}, neptune:{map:"neptunemap.jpg"},
+};
+let THREE;
+const texCache = new Map();
+function loadTex(file, { srgb = true } = {}) {
+  const key = `${file}|${srgb}`;
+  if (texCache.has(key)) return texCache.get(key);
+  const tex = new THREE.TextureLoader().load(TEX_BASE + file, undefined, undefined, () => {});
+  if (srgb) tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  texCache.set(key, tex);
+  return tex;
+}
+const VERT = `varying vec3 vNormal;varying vec2 vUv;void main(){vNormal=normalize(normalMatrix*normal);vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+const FRAG_LIT = `uniform sampler2D map;uniform vec3 lightDir;uniform vec3 rim;varying vec3 vNormal;varying vec2 vUv;void main(){vec3 base=texture2D(map,vUv).rgb;float d=max(dot(normalize(vNormal),normalize(lightDir)),0.0);float shade=0.08+0.92*smoothstep(0.0,1.0,d);vec3 col=base*shade;float rimF=pow(1.0-max(dot(vNormal,vec3(0.0,0.0,1.0)),0.0),2.2);col+=rim*rimF*0.35;gl_FragColor=vec4(col,1.0);}`;
+const FRAG_SUN = `uniform sampler2D map;varying vec2 vUv;varying vec3 vNormal;void main(){vec3 base=texture2D(map,vUv).rgb;float rim=pow(1.0-max(dot(vNormal,vec3(0.0,0.0,1.0)),0.0),1.6);gl_FragColor=vec4(base+rim*vec3(0.9,0.5,0.15),1.0);}`;
+function makeStars(count) {
+  const g = new THREE.BufferGeometry();
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = 14 + Math.random() * 12;
+    const t = Math.random() * Math.PI * 2;
+    const p = Math.acos(2 * Math.random() - 1);
+    positions[i*3]=r*Math.sin(p)*Math.cos(t); positions[i*3+1]=r*Math.sin(p)*Math.sin(t); positions[i*3+2]=r*Math.cos(p);
+  }
+  g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  return new THREE.Points(g, new THREE.PointsMaterial({ color: 0xbcc6ef, size: 0.045, sizeAttenuation: true, transparent: true, opacity: 0.75 }));
+}
+const HERO_TOUR = [
+  {id:'sun',label:'Sun',fact:'A star 109 times wider than Earth.'},
+  {id:'mercury',label:'Mercury',fact:'A day here lasts 176 Earth days.'},
+  {id:'venus',label:'Venus',fact:'Hot enough to melt lead, everywhere.'},
+  {id:'earth',label:'Earth',fact:'The only world with confirmed life.'},
+  {id:'mars',label:'Mars',fact:'Once had rivers, lakes and deltas.'},
+  {id:'jupiter',label:'Jupiter',fact:'A storm wider than Earth has raged for centuries.'},
+  {id:'saturn',label:'Saturn',fact:'Rings 280,000 km wide, tens of metres thick.'},
+  {id:'uranus',label:'Uranus',fact:'Tipped on its side, rolls around the Sun.'},
+  {id:'neptune',label:'Neptune',fact:'Winds near 2,100 km/h — the fastest measured.'},
+];
+function createHero(canvas) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x070c20, 0.02);
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 400);
+  camera.position.set(0, 0, 9);
+  const light = new THREE.DirectionalLight(0xffe9c4, 1.4); light.position.set(3, 2, 4); scene.add(light);
+  scene.add(new THREE.AmbientLight(0x1a2450, 0.55));
+  const meshes = new Map();
+  for (let i = 0; i < HERO_TOUR.length; i++) {
+    const slot = TEXTURE_FILES[HERO_TOUR[i].id] ?? {};
+    const map = slot.map ? loadTex(slot.map) : null;
+    const mat = new THREE.MeshStandardMaterial({ map: map ?? null, color: map ? 0xffffff : 0x88a0ff, roughness: 0.85, metalness: 0.05 });
+    const r = HERO_TOUR[i].id === 'sun' ? 1.6 : HERO_TOUR[i].id === 'jupiter' ? 1.1 : 0.55;
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), mat);
+    mesh.position.set(0, 0, i * 5);
+    mesh.userData.spin = 0.15 + Math.random() * 0.2;
+    scene.add(mesh);
+    meshes.set(HERO_TOUR[i].id, mesh);
+  }
+  const starGeo = new THREE.BufferGeometry();
+  const starCount = 2400, sp = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    sp[i*3]=(Math.random()-.5)*320; sp[i*3+1]=(Math.random()-.5)*200; sp[i*3+2]=(Math.random()-.5)*320;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xb9c4ef, size: 0.9, sizeAttenuation: true, transparent: true, opacity: 0.75 }));
+  scene.add(stars);
+  let targetIndex = 0, currentZ = 9, targetZ = 9, paused = reducedMotion(), t = 0;
+  const listeners = new Set();
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    renderer.setSize(Math.max(1, rect.width), Math.max(1, rect.height), false);
+    camera.aspect = rect.width / Math.max(1, rect.height);
+    camera.updateProjectionMatrix();
+  }
+  const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
+  function setIndex(i, { jump = false } = {}) {
+    targetIndex = ((i % HERO_TOUR.length) + HERO_TOUR.length) % HERO_TOUR.length;
+    targetZ = meshes.get(HERO_TOUR[targetIndex].id).position.z + 2.6;
+    if (jump) currentZ = targetZ;
+    emit();
+  }
+  function info() { return { index: targetIndex, total: HERO_TOUR.length, ...HERO_TOUR[targetIndex], paused }; }
+  function emit() { for (const cb of listeners) cb(info()); }
+  let raf = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!paused && !reducedMotion()) { t += dt; if (t > 4.5) { t = 0; setIndex(targetIndex + 1); } }
+    currentZ += (targetZ - currentZ) * Math.min(1, dt * 1.8);
+    camera.position.z = currentZ;
+    for (const mesh of meshes.values()) mesh.rotation.y += dt * mesh.userData.spin;
+    stars.rotation.y += dt * 0.01;
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  setIndex(0, { jump: true });
+  return {
+    on(cb) { listeners.add(cb); cb(info()); return () => listeners.delete(cb); },
+    next: () => setIndex(targetIndex + 1),
+    prev: () => setIndex(targetIndex - 1),
+    go: (i) => setIndex(i),
+    togglePause() { paused = !paused; emit(); },
+    get paused() { return paused; },
+    destroy() { cancelAnimationFrame(raf); ro.disconnect(); renderer.dispose(); },
+  };
+}
+function createViewer(canvas, { onSpin } = {}) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(0, 0, 3.2);
+  const light = new THREE.DirectionalLight(0xffffff, 1); light.position.set(2, 1.5, 2.5); scene.add(light);
+  scene.add(new THREE.AmbientLight(0x18223f, 0.6));
+  const stars = makeStars(1200);
+  scene.add(stars);
+  let body = null, clouds = null, ring = null, spinRate = 0, tilt = 0;
+  let dragging = false, lastX = 0, lastY = 0, userRotX = 0, userRotY = 0, spinAccum = 0;
+  const state = { id: null };
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    renderer.setSize(Math.max(1, rect.width), Math.max(1, rect.height), false);
+    camera.aspect = rect.width / Math.max(1, rect.height);
+    camera.updateProjectionMatrix();
+  }
+  const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
+  const pointerDown = (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); };
+  const pointerMove = (e) => {
+    if (!dragging) return;
+    userRotY += (e.clientX - lastX) * 0.006;
+    userRotX = Math.max(-1, Math.min(1, userRotX + (e.clientY - lastY) * 0.004));
+    lastX = e.clientX; lastY = e.clientY;
+  };
+  const pointerUp = (e) => { dragging = false; try { canvas.releasePointerCapture(e.pointerId); } catch {} };
+  canvas.addEventListener('pointerdown', pointerDown);
+  canvas.addEventListener('pointermove', pointerMove);
+  canvas.addEventListener('pointerup', pointerUp);
+  canvas.addEventListener('pointercancel', pointerUp);
+  canvas.style.touchAction = 'none';
+  canvas.style.cursor = 'grab';
+  function disposeBody() {
+    if (!body) return;
+    scene.remove(body); body.geometry.dispose(); body.material.dispose(); body = null;
+    if (clouds) { scene.remove(clouds); clouds.geometry.dispose(); clouds.material.dispose(); clouds = null; }
+    if (ring) { scene.remove(ring); ring.geometry.dispose(); ring.material.dispose(); ring = null; }
+  }
+  function setBody(planet) {
+    disposeBody();
+    state.id = planet.id;
+    const slot = TEXTURE_FILES[planet.id] ?? {};
+    const map = slot.map ? loadTex(slot.map) : null;
+    const isSun = planet.id === 'sun';
+    body = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 64), new THREE.ShaderMaterial({
+      uniforms: {
+        map: { value: map },
+        lightDir: { value: new THREE.Vector3(1.5, 1, 1.6).normalize() },
+        rim: { value: isSun ? new THREE.Color(0xffb347) : new THREE.Color(0x5d78ff) },
+      },
+      vertexShader: VERT, fragmentShader: isSun ? FRAG_SUN : FRAG_LIT,
+    }));
+    scene.add(body);
+    if (slot.clouds) {
+      clouds = new THREE.Mesh(
+        new THREE.SphereGeometry(1.008, 64, 48),
+        new THREE.MeshBasicMaterial({ map: loadTex(slot.clouds), transparent: true, opacity: 0.55, depthWrite: false }),
+      );
+      scene.add(clouds);
+    }
+    if (slot.ring) {
+      const inner = 1.28, outer = 2.3;
+      const ringGeo = new THREE.RingGeometry(inner, outer, 128, 1);
+      const pos = ringGeo.attributes.position, uv = ringGeo.attributes.uv;
+      const v3 = new THREE.Vector3();
+      for (let i = 0; i < pos.count; i++) {
+        v3.fromBufferAttribute(pos, i);
+        uv.setXY(i, 0.5, (v3.length() - inner) / (outer - inner));
+      }
+      ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({
+        map: loadTex(slot.ring, { srgb: true }), transparent: true, side: THREE.DoubleSide, opacity: 0.9, depthWrite: false,
+      }));
+      ring.rotation.x = Math.PI / 2;
+      scene.add(ring);
+    }
+    const hours = Math.abs(planet.rotation?.periodHours ?? 24);
+    const earthFactor = 24 / hours;
+    spinRate = Math.sign(planet.rotation?.periodHours ?? 1) * Math.min(3, Math.max(-3, Math.log2(1 + Math.abs(earthFactor)) * 0.4));
+    if (planet.rotation?.direction === 'retrograde') spinRate *= -1;
+    tilt = ((planet.rotation?.axialTiltDeg ?? 0) * Math.PI) / 180;
+    userRotX = 0; userRotY = 0;
+  }
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!dragging && !reducedMotion()) spinAccum += dt * spinRate * 0.6;
+    if (body) {
+      body.rotation.y = spinAccum + userRotY;
+      body.rotation.x = tilt;
+      body.rotation.z = -tilt * 0.3;
+      if (clouds) { clouds.rotation.y = spinAccum + userRotY + dt * 0.02; clouds.rotation.x = tilt; }
+      if (ring) ring.rotation.z = spinAccum * 0.15;
+    }
+    stars.rotation.y += dt * 0.005;
+    camera.rotation.x = userRotX * 0.35;
+    renderer.render(scene, camera);
+    if (onSpin) onSpin({ spinRate });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return { setBody, get id() { return state.id; }, destroy() { ro.disconnect(); disposeBody(); renderer.dispose(); } };
+}
+
+/* ============ VISUALS ============ */
+function setupCanvas(canvas) {
+  const ctx = canvas.getContext('2d');
+  const state = { w: 0, h: 0 };
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width || canvas.offsetWidth || 480;
+    const h = rect.height || canvas.offsetHeight || 270;
+    state.w = w; state.h = h;
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
+  setTimeout(resize, 100);
+  return { ctx, state, destroy: () => ro.disconnect() };
+}
+function greenhouse(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  const rays = Array.from({ length: 22 }, (_, i) => ({ x: Math.random(), y: -0.2 - Math.random() * 0.6, speed: 0.15 + Math.random() * 0.2, heat: i % 3 === 0 }));
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#080d1e'; ctx.fillRect(0, 0, w, h);
+    const sx = w * 0.12, sy = h * 0.5, sr = Math.min(w, h) * 0.09;
+    const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr * 1.6);
+    sg.addColorStop(0, '#ffe4a1'); sg.addColorStop(0.5, '#f5a623'); sg.addColorStop(1, 'rgba(245,166,35,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sx, sy, sr * 1.6, 0, Math.PI * 2); ctx.fill();
+    const px = w * 0.62, py = h * 0.55, pr = Math.min(w, h) * 0.18;
+    const pg = ctx.createRadialGradient(px - pr * 0.4, py - pr * 0.4, pr * 0.2, px, py, pr);
+    pg.addColorStop(0, '#f2dca6'); pg.addColorStop(0.7, '#a06438'); pg.addColorStop(1, '#4a2717');
+    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,180,110,.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(px, py, pr + 6, 0, Math.PI * 2); ctx.stroke();
+    for (const r of rays) {
+      const x = sx + (px - sx) * r.x;
+      const y = sy + (py - sy) * r.x + r.y * h * 0.8;
+      ctx.strokeStyle = r.heat ? 'rgba(255,140,60,.9)' : 'rgba(255,220,140,.55)';
+      ctx.lineWidth = r.heat ? 1.6 : 1;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 8, y + 18); ctx.stroke();
+      if (!reducedMotion()) { r.x += r.speed * dt; if (r.x > 1.05) { r.x = -0.05; r.y = -0.2 - Math.random() * 0.6; r.heat = Math.random() < 0.25; } }
+    }
+    ctx.strokeStyle = 'rgba(255,110,80,.75)';
+    for (let i = 0; i < 6; i++) {
+      const a = -0.9 + i * 0.3 + Math.sin(t + i) * 0.05;
+      const x0 = px + Math.cos(a) * (pr + 10), y0 = py + Math.sin(a) * (pr + 10);
+      const x1 = px + Math.cos(a) * (pr + 60), y1 = py + Math.sin(a) * (pr + 60);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo((x0+x1)/2 + Math.sin(t*2 + i) * 8, (y0+y1)/2, x1, y1); ctx.stroke();
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function corona(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w * 0.5, cy = h * 0.5, sunR = Math.min(w, h) * 0.14;
+    const sg = ctx.createRadialGradient(cx, cy, sunR * 0.4, cx, cy, sunR * 1.4);
+    sg.addColorStop(0, '#fff3c4'); sg.addColorStop(0.6, '#ff9a1f'); sg.addColorStop(1, 'rgba(255,120,20,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, sunR * 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffe27a'; ctx.beginPath(); ctx.arc(cx, cy, sunR, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,240,180,.85)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, sunR * 1.25, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,180,120,.55)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, sunR * 1.7, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,200,120,.9)'; ctx.lineWidth = 1.6;
+    for (let i = 0; i < 14; i++) {
+      const a0 = (i / 14) * Math.PI * 2, a1 = a0 + Math.PI * 0.35;
+      const r0 = sunR * 1.1, r1 = sunR * 1.9;
+      ctx.beginPath();
+      for (let k = 0; k <= 24; k++) {
+        const p = k / 24, a = a0 + (a1 - a0) * p;
+        const r = r0 + (r1 - r0) * p + Math.sin(t * 4 + i * 0.9 + k * 0.6) * 4 * p;
+        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function redspot(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#1b0e08'; ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 12; i++) {
+      const y = (i / 12) * h;
+      const grad = ctx.createLinearGradient(0, y, 0, y + h / 12);
+      grad.addColorStop(0, i % 2 ? '#a87a56' : '#e2c9a0');
+      grad.addColorStop(1, i % 2 ? '#c99667' : '#f0dcb8');
+      ctx.fillStyle = grad; ctx.fillRect(0, y, w, h / 12 + 1);
+    }
+    const cx = w * 0.55, cy = h * 0.62, rx = Math.min(w, h) * 0.18, ry = Math.min(w, h) * 0.11;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rx);
+    g.addColorStop(0, '#e06a4a'); g.addColorStop(0.7, '#a83a24'); g.addColorStop(1, 'rgba(120,40,20,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,220,180,.55)'; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      for (let k = 0; k <= 40; k++) {
+        const p = k / 40;
+        const a = p * Math.PI * 1.8 + t * 0.5 + i * 0.4;
+        const r = (0.3 + p * 0.7) * rx * 0.85;
+        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r * (ry / rx);
+        if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Watching since 1831 — spot is shrinking', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function impact(canvas, props) {
+  const mode = props?.mode ?? 'tilt';
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt * 0.6;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w * 0.5, cy = h * 0.55, R = Math.min(w, h) * 0.16, cyc = (t % 2) / 2;
+    const tilt = mode === 'tilt' ? cyc * 1.5 : 0;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(tilt);
+    const pg = ctx.createRadialGradient(-R*0.3, -R*0.3, R*0.2, 0, 0, R);
+    pg.addColorStop(0, '#9fd6e0'); pg.addColorStop(0.7, '#4a7ba0'); pg.addColorStop(1, '#16324a');
+    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(-R, 0); ctx.lineTo(R, 0); ctx.stroke();
+    ctx.restore();
+    if (cyc < 0.5) {
+      const p = cyc / 0.5;
+      const ix = w + 40 - (w * 0.9) * p, iy = h * 0.3 + (h * 0.25) * p, ir = R * 0.4;
+      const ig = ctx.createRadialGradient(ix, iy, 0, ix, iy, ir);
+      ig.addColorStop(0, '#ffcfa1'); ig.addColorStop(1, '#a06438');
+      ctx.fillStyle = ig; ctx.beginPath(); ctx.arc(ix, iy, ir, 0, Math.PI * 2); ctx.fill();
+    } else {
+      const p = (cyc - 0.5) / 0.5;
+      ctx.fillStyle = `rgba(255,200,120,${1 - p})`;
+      ctx.beginPath(); ctx.arc(cx, cy - R * 0.5, R * (0.5 + p * 1.4), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText(mode === 'tilt' ? 'Giant impact — Uranus tips over' : mode === 'moon' ? 'Debris disc forms the Moon' : 'Impact', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function marsloss(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  const particles = Array.from({ length: 40 }, () => ({ x: 1.05, y: Math.random(), v: 0.15 + Math.random() * 0.25 }));
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#080d1e'; ctx.fillRect(0, 0, w, h);
+    const cx = w * 0.35, cy = h * 0.5, R = Math.min(w, h) * 0.16;
+    const pg = ctx.createRadialGradient(cx - R*0.4, cy - R*0.4, R*0.2, cx, cy, R);
+    pg.addColorStop(0, '#e08a5a'); pg.addColorStop(0.6, '#a9472a'); pg.addColorStop(1, '#4a1c10');
+    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,200,120,.55)'; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 8; i++) {
+      const y = (i / 8) * h + Math.sin(t * 2 + i) * 6;
+      ctx.beginPath();
+      const off = (t * 30 + i * 20) % 60;
+      ctx.moveTo(w - 20 + off, y); ctx.lineTo(w + 40 + off, y); ctx.stroke();
+    }
+    for (const p of particles) {
+      if (!reducedMotion()) { p.x += p.v * dt; if (p.x > 1.3) { p.x = 0.4; p.y = Math.random(); } }
+      const x = w * p.x, y = h * p.y;
+      ctx.fillStyle = `rgba(255,180,120,${Math.max(0, 1 - (p.x - 0.4) / 0.9)})`;
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Solar wind strips the atmosphere', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function planetnine(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt * 0.3;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w * 0.15, cy = h * 0.6;
+    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+    sg.addColorStop(0, '#ffe27a'); sg.addColorStop(1, 'rgba(255,200,80,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(180,190,224,.35)'; ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+      const a = 120 + i * 40 + Math.sin(t + i) * 4, b = 60 + i * 12;
+      const rot = (i / 8) * Math.PI + t * 0.05;
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.beginPath(); ctx.ellipse(0, 0, a, b, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.fillStyle = '#ffd27a';
+    for (let i = 0; i < 6; i++) {
+      const rot = 0.4 + i * 0.02, a = 120 + i * 40;
+      ctx.beginPath(); ctx.arc(cx + a * Math.cos(rot), cy + a * Math.sin(rot) * 0.4, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    const px = cx + w * 0.6 + Math.sin(t) * 6, py = cy + Math.sin(t * 0.7) * 12;
+    const pg = ctx.createRadialGradient(px, py, 0, px, py, 14);
+    pg.addColorStop(0, '#566BFF'); pg.addColorStop(1, 'rgba(86,107,255,0)');
+    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Distant orbits cluster — a hidden Planet Nine?', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function interiorVisual(canvas, props) {
+  const id = props?.body ?? 'earth';
+  let target = PLANETS.find((p) => p.id === id);
+  if (!target && MOON_INTERIORS[id]) target = { id, interior: MOON_INTERIORS[id] };
+  if (!target) target = PLANETS.find((p) => p.id === 'earth');
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.32;
+    const layers = target.interior ?? [];
+    for (let i = layers.length - 1; i >= 0; i--) {
+      const layer = layers[i];
+      ctx.fillStyle = layer.color ?? '#666';
+      ctx.beginPath(); ctx.arc(cx, cy, R * (layer.to ?? 1), 0, Math.PI * 2); ctx.fill();
+    }
+    t += dt;
+    const pulse = 0.5 + 0.5 * Math.sin(t * 1.5);
+    ctx.strokeStyle = `rgba(255,255,255,${0.25 + pulse * 0.35})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, R + 4, 0, Math.PI * 2); ctx.stroke();
+    ctx.font = '12px system-ui, sans-serif';
+    layers.forEach((layer, i) => {
+      const y = 22 + i * 18;
+      ctx.beginPath(); ctx.fillStyle = layer.color; ctx.arc(20, y - 4, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(232,236,255,.85)';
+      ctx.fillText(layer.name, 32, y);
+    });
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function rings(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt * 0.3;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2, R0 = Math.min(w, h) * 0.1;
+    const sg = ctx.createRadialGradient(cx - R0*0.3, cy - R0*0.3, R0*0.2, cx, cy, R0);
+    sg.addColorStop(0, '#f0dcb8'); sg.addColorStop(1, '#a37640');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, R0, 0, Math.PI * 2); ctx.fill();
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.35);
+    for (let i = 0; i < 9; i++) {
+      const r = R0 * (1.4 + i * 0.14);
+      ctx.strokeStyle = `rgba(240,220,180,${0.35 + 0.35 * Math.sin(t + i)})`;
+      ctx.lineWidth = 3 - (i % 3) * 0.7;
+      ctx.beginPath(); ctx.ellipse(0, 0, r, r * 0.32, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Dust darkens the ice over time — or does it?', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function plume(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  const jets = Array.from({ length: 20 }, () => ({ a: Math.PI / 2 + (Math.random() - 0.5) * 1.4, v: 0.6 + Math.random() * 0.5, life: Math.random() }));
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w / 2, cy = h * 0.7, R = Math.min(w, h) * 0.18;
+    const mg = ctx.createRadialGradient(cx - R*0.4, cy - R*0.4, R*0.2, cx, cy, R);
+    mg.addColorStop(0, '#f0f5ff'); mg.addColorStop(0.7, '#b6c4e0'); mg.addColorStop(1, '#4c5c80');
+    ctx.fillStyle = mg; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+    for (const j of jets) {
+      if (!reducedMotion()) { j.life -= dt * j.v; if (j.life < 0) { j.life = 1; j.a = Math.PI / 2 + (Math.random() - 0.5) * 1.4; } }
+      const r0 = R, r1 = R + (1 - j.life) * R * 2.2;
+      const x0 = cx + Math.cos(-j.a) * r0, y0 = cy - Math.sin(-j.a) * r0;
+      const x1 = cx + Math.cos(-j.a) * r1, y1 = cy - Math.sin(-j.a) * r1;
+      ctx.strokeStyle = `rgba(180,220,255,${j.life * 0.85})`;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Enceladus sprays its ocean into space', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function spectrum(canvas, props) {
+  const gas = props?.gas ?? 'methane';
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  const lines = {
+    methane:[{wl:.62,label:'CH₄'},{wl:.7,label:'CH₄'},{wl:.79,label:'CH₄'}],
+    phosphine:[{wl:.55,label:'PH₃'},{wl:.66,label:'PH₃'}],
+    dms:[{wl:.58,label:'DMS?'}],
+  }[gas] ?? [];
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const y0 = h * 0.55, y1 = h * 0.75;
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, '#4a2ab0'); grad.addColorStop(0.3, '#2b6be6'); grad.addColorStop(0.6, '#4ad0a0');
+    grad.addColorStop(0.8, '#e6d24a'); grad.addColorStop(1, '#e6552a');
+    ctx.fillStyle = grad; ctx.fillRect(40, y0, w - 80, y1 - y0);
+    for (const line of lines) {
+      const x = 40 + (w - 80) * (line.wl - 0.4);
+      ctx.fillStyle = `rgba(0,0,0,${0.4 + 0.6 * Math.abs(Math.sin(t * 1.2))})`;
+      ctx.fillRect(x - 2, y0, 4, y1 - y0);
+      ctx.fillStyle = 'rgba(232,236,255,.9)';
+      ctx.font = '11px system-ui, sans-serif';
+      ctx.fillText(line.label, x - 8, y0 - 8);
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText(`Absorption spectrum — ${gas}`, 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function signal(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  const samples = [0,0,2,4,8,12,16,20,25,30,25,22,18,12,8,5,3,2,1,0,0,1,0,0];
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const y0 = h * 0.7;
+    ctx.strokeStyle = 'rgba(180,190,224,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(20, y0); ctx.lineTo(w - 20, y0); ctx.stroke();
+    const dx = (w - 40) / samples.length;
+    ctx.strokeStyle = '#6EE0A0'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    const reveal = Math.min(samples.length, Math.floor(t * 12));
+    samples.forEach((v, i) => {
+      if (i > reveal) return;
+      const x = 20 + i * dx, y = y0 - v * (h * 0.018);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    const peak = samples.indexOf(Math.max(...samples));
+    if (peak >= 0 && peak <= reveal) {
+      const x = 20 + peak * dx, y = y0 - samples[peak] * (h * 0.018);
+      ctx.fillStyle = '#FF6B3D'; ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.font = 'bold 15px system-ui, sans-serif';
+      ctx.fillText('Wow!', x - 20, y - 14);
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Big Ear, 15 Aug 1977 — 72 seconds', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function trajectory(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt * 0.4;
+    const { w, h } = state;
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const cx = w * 0.5, cy = h * 0.55;
+    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 40);
+    sg.addColorStop(0, '#ffe27a'); sg.addColorStop(1, 'rgba(255,200,80,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, 40, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(110,208,224,.9)'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const p = i / 200;
+      const x = -w * 0.1 + p * w * 1.2;
+      const y = cy + Math.sin((p - 0.5) * 1.6) * h * 0.28 + Math.cos(p * 4 + t) * 3;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    const p = (t % 3) / 3;
+    ctx.fillStyle = '#6EE0A0';
+    ctx.save();
+    ctx.translate(-w * 0.1 + p * w * 1.2, cy + Math.sin((p - 0.5) * 1.6) * h * 0.28);
+    ctx.rotate(-0.3);
+    ctx.fillRect(-10, -2, 20, 4);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText("'Oumuamua — extra push from outgassing?", 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+function drake(canvas) {
+  const { ctx, state, destroy } = setupCanvas(canvas);
+  let raf = 0, t = 0, last = performance.now();
+  let dots = [], lastW = 0;
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reducedMotion()) t += dt * 0.3;
+    const { w, h } = state;
+    if (w !== lastW) {
+      lastW = w; dots = [];
+      const cols = 24, rows = 12, cw = w / cols, ch = h / rows;
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++)
+        dots.push({ x: x * cw + cw / 2, y: y * ch + ch / 2, on: Math.random() < 0.4 });
+    }
+    ctx.fillStyle = '#05091a'; ctx.fillRect(0, 0, w, h);
+    const fill = 0.3 + 0.5 * Math.sin(t * 0.5);
+    for (const d of dots) {
+      if (d.on && Math.random() < fill) {
+        ctx.fillStyle = `rgba(110,208,224,${0.6 + Math.random() * 0.4})`;
+        ctx.beginPath(); ctx.arc(d.x, d.y, 3, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.strokeStyle = 'rgba(110,208,224,.25)';
+        ctx.beginPath(); ctx.arc(d.x, d.y, 3, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = 'rgba(232,236,255,.7)'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText('Drake equation: how many civilisations?', 20, h - 12);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { cancelAnimationFrame(raf); destroy(); } };
+}
+const VISUALS = { greenhouse, corona, redspot, impact, marsloss, planetnine, interior: interiorVisual, rings, plume, spectrum, signal, trajectory, drake };
+
+/* ============ SECTIONS ============ */
+function initNav() {
+  const topbar = $('#topbar'), bar = $('#traceBar'), menu = $('#menuBtn'), nav = $('#nav');
+  menu?.addEventListener('click', () => {
+    const open = nav.dataset.open === 'true';
+    nav.dataset.open = String(!open);
+    menu.setAttribute('aria-expanded', String(!open));
+  });
+  nav?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') { nav.dataset.open = 'false'; menu?.setAttribute('aria-expanded', 'false'); }
+  });
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const p = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
+    if (bar) bar.style.width = `${p * 100}%`;
+    if (topbar) topbar.dataset.stuck = String(scrollY > 8);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  const links = $$('.nav-link');
+  const sections = links.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) {
+      const id = `#${e.target.id}`;
+      for (const a of links) a.setAttribute('aria-current', String(a.getAttribute('href') === id));
+    }
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach((s) => io.observe(s));
+}
+
+function initHeroSection() {
+  const canvas = $('#heroCanvas');
+  let hero = null;
+  try { hero = createHero(canvas); } catch (e) { console.warn('Hero WebGL unavailable', e); canvas.hidden = true; return; }
+  const nameEl = $('#tourName'), factEl = $('#tourFact'), dots = $('#tourDots');
+  const prev = $('#tourPrev'), next = $('#tourNext'), pause = $('#tourPause');
+  hero.on(({ total, index, label, fact }) => {
+    if (dots.children.length !== total) {
+      dots.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('aria-label', `Show ${HERO_TOUR[i].label}`);
+        b.addEventListener('click', () => hero.go(i));
+        li.append(b); dots.append(li);
+      }
+    }
+    [...dots.children].forEach((li, i) => li.firstChild.setAttribute('aria-current', String(i === index)));
+    nameEl.textContent = label;
+    factEl.textContent = fact;
+  });
+  prev.addEventListener('click', () => hero.prev());
+  next.addEventListener('click', () => hero.next());
+  pause.addEventListener('click', () => { hero.togglePause(); pause.setAttribute('aria-pressed', String(hero.paused)); });
+  for (const a of $$('.hero .actions a')) {
+    a.addEventListener('click', (e) => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' });
+    });
+  }
+}
+
+/* ---- SOLAR: bulletproof immediate + retry drawing ---- */
+const METRICS = [
+  { id: 'diameterKm',  label: 'Diameter',        unit: 'km',     fmt: (v) => fmt(v) },
+  { id: 'massEarths',  label: 'Mass',            unit: 'Earths', fmt: (v) => fmt(v, 3) },
+  { id: 'gravity',     label: 'Surface gravity', unit: 'm/s²',   fmt: (v) => fmt(v, 2) },
+  { id: 'meanTempC',   label: 'Mean temp',       unit: '°C',     fmt: (v) => fmt(v) },
+  { id: 'velocityKms', label: 'Orbital speed',   unit: 'km/s',   fmt: (v) => fmt(v, 1) },
+  { id: 'dayLength',   label: 'Day length',      unit: 'h',      fmt: (v) => hoursLabel(v) },
+];
+
+function initSolarSection() {
+  const canvas = $('#orbitCanvas');
+  const dateEl = $('#orbitDate');
+  const readout = $('#readout');
+  const playBtn = $('#orbitPlay');
+  const speedSel = $('#orbitSpeed');
+  const nowBtn = $('#orbitNow');
+  const chips = $('#metricChips');
+  const bars = $('#bars');
+  const insight = $('#metricInsight');
+  const logT = $('#logToggle');
+  const sortT = $('#sortToggle');
+  const table = $('#dataTable');
+
+  if (!canvas || !readout || !table) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const bodies = PLANETS.filter((p) => p.orbit?.elements);
+  let simDate = new Date(), playing = false, speed = 365;
+
+  // Draw with fixed default size FIRST so the map is never blank,
+  // even if layout hasn't settled yet.
+  let curW = 900, curH = 560;
+  canvas.width = curW;
+  canvas.height = curH;
+
+  function fitToDisplay() {
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(4, Math.round(rect.width));
+    const h = Math.max(4, Math.round(rect.height));
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const bufW = Math.round(w * dpr);
+    const bufH = Math.round(h * dpr);
+    if (canvas.width !== bufW || canvas.height !== bufH) {
+      canvas.width = bufW;
+      canvas.height = bufH;
+    }
+    curW = w;
+    curH = h;
+  }
+
+  const radiusFor = (id) => ({ mercury: 1.8, venus: 2.3, earth: 2.4, mars: 2, jupiter: 3.8, saturn: 3.4, uranus: 2.8, neptune: 2.8 }[id] ?? 2);
+
+  function drawOrbit() {
+    const dpr = canvas.width / Math.max(1, curW);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const w = curW, h = curH;
+    // Deep space background
+    ctx.fillStyle = '#060a18';
+    ctx.fillRect(0, 0, w, h);
+    // Radial glow for depth
+    const bg = ctx.createRadialGradient(w/2, h/2, Math.min(w,h)*0.05, w/2, h/2, Math.max(w,h)*0.6);
+    bg.addColorStop(0, '#0e1c40');
+    bg.addColorStop(1, '#04060f');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+    // Faint stars
+    ctx.fillStyle = 'rgba(180,200,255,0.35)';
+    for (let i = 0; i < 60; i++) {
+      const x = (i * 137.5) % w;
+      const y = (i * 79.3) % h;
+      ctx.fillRect(x, y, 1, 1);
+    }
+    const cx = w / 2, cy = h / 2;
+    const maxAu = 31;
+    const scale = (Math.min(w, h) / 2 - 24) / Math.sqrt(maxAu);
+    const rScale = (r) => Math.sqrt(r) * scale;
+    // Sun glow
+    const glowR = Math.min(w, h) * 0.09;
+    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+    sg.addColorStop(0, '#fff3c4');
+    sg.addColorStop(0.25, '#ffb347');
+    sg.addColorStop(0.6, 'rgba(255,140,40,0.4)');
+    sg.addColorStop(1, 'rgba(255,140,40,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.arc(cx, cy, glowR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffe27a';
+    ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+    // Orbits
+    for (const b of bodies) {
+      const el = b.orbit.elements;
+      ctx.strokeStyle = 'rgba(150,170,220,0.32)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      const path = orbitPath(el, 180);
+      for (let i = 0; i < path.length; i++) {
+        const { r, lon } = path[i];
+        const x = cx + rScale(r) * Math.cos(lon);
+        const y = cy - rScale(r) * Math.sin(lon);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+    // Planets
+    for (const b of bodies) {
+      const pos = position(b.orbit.elements, simDate);
+      const x = cx + rScale(pos.r) * Math.cos(pos.lon);
+      const y = cy - rScale(pos.r) * Math.sin(pos.lon);
+      const pr = radiusFor(b.id);
+      const pg = ctx.createRadialGradient(x, y, 0, x, y, pr * 3);
+      pg.addColorStop(0, b.color || '#fff');
+      pg.addColorStop(0.5, (b.color || '#fff') + '80');
+      pg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = pg;
+      ctx.beginPath(); ctx.arc(x, y, pr * 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = b.color || '#fff';
+      ctx.beginPath(); ctx.arc(x, y, pr, 0, Math.PI * 2); ctx.fill();
+    }
+    if (dateEl) dateEl.textContent = dateLabel(simDate);
+    renderReadout();
+  }
+
+  function renderReadout() {
+    const earth = PLANETS.find((p) => p.id === 'earth');
+    const pos = position(earth.orbit.elements, simDate);
+    const light = (pos.r * 499.0048) / 60;
+    readout.innerHTML = `
+      <h3>Right now</h3>
+      <dl>
+        <dt>Date</dt><dd>${esc(dateLabel(simDate))}</dd>
+        <dt>Earth–Sun distance</dt><dd>${pos.r.toFixed(3)} AU</dd>
+        <dt>Earth orbital speed</dt><dd>${pos.speed.toFixed(2)} km/s</dd>
+        <dt>Sunlight travel time</dt><dd>${light.toFixed(1)} min</dd>
+      </dl>
+      <p class="footnote">Positions solved from JPL approximate Keplerian elements for ${esc(simDate.getUTCFullYear())}.</p>`;
+  }
+
+  // Draw right now with the default 900x560 buffer
+  drawOrbit();
+
+  // Multiple retries to catch layout settling, and on window resize
+  [0, 30, 100, 250, 600, 1500].forEach((t) => setTimeout(() => { fitToDisplay(); drawOrbit(); }, t));
+  addEventListener('resize', () => { fitToDisplay(); drawOrbit(); });
+  if ('ResizeObserver' in window) {
+    try { new ResizeObserver(() => { fitToDisplay(); drawOrbit(); }).observe(canvas); } catch {}
+  }
+
+  // Animation loop: advances simulation date when playing, redraws when needed
+  let t0 = performance.now(), acc = 0;
+  function loop(now) {
+    const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
+    if (playing && !reducedMotion()) {
+      acc += dt * speed * 86400000;
+      const day = 86400000;
+      while (acc >= day) { simDate = new Date(simDate.getTime() + day); acc -= day; }
+      fitToDisplay();
+      drawOrbit();
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Controls
+  if (playBtn) playBtn.addEventListener('click', () => {
+    playing = !playing;
+    playBtn.textContent = playing ? 'Pause' : 'Play';
+    playBtn.setAttribute('aria-pressed', String(playing));
+  });
+  if (speedSel) speedSel.addEventListener('change', () => { speed = Number(speedSel.value); });
+  if (nowBtn) nowBtn.addEventListener('click', () => { simDate = new Date(); acc = 0; drawOrbit(); });
+
+  // Comparison bars
+  let metric = 'diameterKm', logScale = false, sorted = false;
+  function valueFor(p, id) {
+    switch (id) {
+      case 'diameterKm': return p.physical.diameterKm;
+      case 'massEarths': return p.physical.massEarths;
+      case 'gravity': return p.physical.gravity;
+      case 'meanTempC': return p.physical.meanTempC;
+      case 'velocityKms': return p.orbit.velocityKms;
+      case 'dayLength': return Math.abs(p.rotation.periodHours);
+    }
+    return 0;
+  }
+  function renderBars() {
+    const m = METRICS.find((x) => x.id === metric);
+    const rows = PLANETS.map((p) => ({ p, v: valueFor(p, metric) }));
+    const max = Math.max(...rows.map((r) => Math.abs(r.v)));
+    const min = Math.min(...rows.map((r) => Math.abs(r.v)));
+    const list = sorted ? [...rows].sort((a, b) => b.v - a.v) : rows;
+    bars.innerHTML = list.map(({ p, v }) => {
+      const ratio = logScale
+        ? (Math.log10(Math.abs(v) + 1) - Math.log10(min + 1)) / (Math.log10(max + 1) - Math.log10(min + 1))
+        : Math.abs(v) / max;
+      return `<li><span>${esc(p.name)}</span><span class="bar-track"><span class="bar-fill" style="width:${(Math.max(0, Math.min(1, ratio)) * 100).toFixed(1)}%"></span></span><span>${m.fmt(v)} ${esc(m.unit)}</span></li>`;
+    }).join('');
+    insight.textContent = insightFor(metric);
+  }
+  function insightFor(id) {
+    return {
+      diameterKm: 'Jupiter is 11 Earths across, but only 1/10th the Sun.',
+      massEarths: 'Jupiter alone outweighs every other planet combined.',
+      gravity: 'Venus and Earth are nearly twins at the surface; Mars is a third of Earth.',
+      meanTempC: 'Venus is hotter than Mercury because its atmosphere traps heat.',
+      velocityKms: 'Mercury laps the Sun at 47 km/s; Neptune crawls at 5.',
+      dayLength: 'Venus takes longer to spin once than to orbit the Sun.',
+    }[id] ?? '';
+  }
+  if (chips) METRICS.forEach((m, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = m.label;
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', () => {
+      metric = m.id;
+      [...chips.children].forEach((c) => c.setAttribute('aria-pressed', String(c === b)));
+      renderBars();
+    });
+    chips.append(b);
+  });
+  if (logT) logT.addEventListener('change', () => { logScale = logT.checked; renderBars(); });
+  if (sortT) sortT.addEventListener('change', () => { sorted = sortT.checked; renderBars(); });
+  renderBars();
+
+  // Data table
+  const cols = [
+    ['Name', (p) => p.name],
+    ['Type', (p) => p.type],
+    ['Diameter (km)', (p) => fmt(p.physical.diameterKm)],
+    ['Mass (Earths)', (p) => fmt(p.physical.massEarths, 3)],
+    ['Gravity (m/s²)', (p) => fmt(p.physical.gravity, 2)],
+    ['Distance (M km)', (p) => fmt(p.orbit.distanceMillionKm)],
+    ['Year', (p) => yearsLabel(p.orbit.periodDays)],
+    ['Day', (p) => hoursLabel(p.rotation.periodHours)],
+    ['Mean temp (°C)', (p) => fmt(p.physical.meanTempC)],
+    ['Moons', (p) => fmt(p.moons)],
+  ];
+  table.innerHTML = `<thead><tr>${cols.map(([h]) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${PLANETS.map((p) => `<tr data-id="${esc(p.id)}">${cols.map(([, f]) => `<td>${esc(f(p))}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  table.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+    const btn = $('#planetPicker')?.querySelector(`button[data-id="${tr.dataset.id}"]`);
+    btn?.click();
+    document.getElementById('planets')?.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' });
+  });
+}
+
+/* ---- PLANETS ---- */
+function initPlanetsSection() {
+  const picker = $('#planetPicker'), viewerCanvas = $('#viewerCanvas');
+  const interiorCanvas = $('#interiorCanvas'), viewerSpin = $('#viewerSpin');
+  const panel = $('#planetPanel'), hint = $('#viewerHint');
+  let interiorOn = false, currentIndex = 3, interiorInstance = null;
+  const viewer = createViewer(viewerCanvas, {
+    onSpin: () => {
+      const current = PLANETS.find((p) => p.id === viewer.id);
+      if (!current) return;
+      const dir = current.rotation.direction;
+      viewerSpin.textContent = `${dir === 'retrograde' ? 'retrograde' : 'prograde'}, ${hoursLabel(current.rotation.periodHours)} per turn`;
+    },
+  });
+  PLANETS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.role = 'tab'; b.textContent = p.name;
+    b.dataset.id = p.id;
+    b.setAttribute('aria-selected', String(i === currentIndex));
+    b.addEventListener('click', () => select(i));
+    picker.append(b);
+  });
+  function select(i) {
+    currentIndex = i;
+    const p = PLANETS[i];
+    [...picker.children].forEach((c, j) => c.setAttribute('aria-selected', String(j === i)));
+    viewer.setBody(p);
+    panel.innerHTML = renderPanel(p);
+    if (interiorOn) renderInterior(p);
+  }
+  function renderInterior(p) {
+    interiorInstance?.destroy?.();
+    interiorInstance = interiorVisual(interiorCanvas, { body: p.id });
+  }
+  function clearInterior() { interiorInstance?.destroy?.(); interiorInstance = null; }
+  function showSurface() {
+    interiorOn = false;
+    clearInterior();
+    interiorCanvas.hidden = true;
+    interiorCanvas.style.display = 'none';
+    viewerCanvas.style.visibility = 'visible';
+    viewerCanvas.style.opacity = '1';
+    $$('.seg-btn').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.view === 'surface')));
+  }
+  function showInside() {
+    interiorOn = true;
+    interiorCanvas.hidden = false;
+    interiorCanvas.style.display = 'block';
+    viewerCanvas.style.visibility = 'hidden';
+    viewerCanvas.style.opacity = '0';
+    renderInterior(PLANETS[currentIndex]);
+    $$('.seg-btn').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.view === 'inside')));
+  }
+  for (const b of $$('.seg-btn')) {
+    b.addEventListener('click', () => {
+      if (b.dataset.view === 'inside') showInside();
+      else showSurface();
+    });
+  }
+  showSurface();
+  function renderPanel(p) {
+    return `
+      <h3>${esc(p.name)}</h3>
+      <p class="tagline">${esc(p.tagline)}</p>
+      <div class="kpis">
+        <div class="kpi"><b>Diameter</b><span>${fmt(p.physical.diameterKm)} km</span></div>
+        <div class="kpi"><b>Mass</b><span>${p.physical.massEarths >= 1000 ? sci(p.physical.massKg, 2) + ' kg' : fmt(p.physical.massEarths, 3) + ' × Earth'}</span></div>
+        <div class="kpi"><b>Distance</b><span>${fmt(p.orbit.distanceMillionKm)} M km</span></div>
+        <div class="kpi"><b>Year</b><span>${yearsLabel(p.orbit.periodDays)}</span></div>
+        <div class="kpi"><b>Day</b><span>${hoursLabel(p.rotation.periodHours)}</span></div>
+        <div class="kpi"><b>Moons</b><span>${fmt(p.moons)}</span></div>
+      </div>
+      <h4>Speciality</h4>
+      <p>${esc(p.speciality)}</p>
+      <h4>Facts</h4>
+      <ul class="facts">${p.facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+      <h4>Open questions</h4>
+      <ul class="unknowns">${p.unknowns.map((u) => `<li>${esc(u)}</li>`).join('')}</ul>
+      <h4>Missions</h4>
+      <ul class="facts">${p.missions.map((m) => `<li><b>${esc(m.name)}</b> (${esc(m.year)}, ${esc(m.agency)}) — ${esc(m.note)}</li>`).join('')}</ul>`;
+  }
+  select(currentIndex);
+  viewerCanvas.addEventListener('pointerdown', () => hint?.classList.add('fade'), { once: true });
+}
+
+/* ---- MYSTERIES ---- */
+function initMysteriesSection() {
+  const grid = $('#mysteryGrid'), chips = $('#mysteryChips');
+  const form = $('#searchForm'), input = $('#mysterySearch');
+  const status = $('#searchStatus'), related = $('#relatedResults');
+  const modal = $('#mysteryModal');
+  let active = null;
+  const facets = { categories: [...new Set(MYSTERIES.map((m) => m.category))].sort() };
+  function render() {
+    const list = active ? MYSTERIES.filter((m) => m.category === active) : MYSTERIES;
+    grid.innerHTML = list.map(cardHTML).join('');
+    for (const card of grid.querySelectorAll('.mystery-card')) card.addEventListener('click', () => openDetail(card.dataset.id));
+    status.textContent = active ? `${list.length} mysteries in "${active}".` : `Showing all ${list.length} open mysteries.`;
+  }
+  facets.categories.forEach((c) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = c;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => {
+      active = active === c ? null : c;
+      [...chips.children].forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      render();
+    });
+    chips.append(b);
+  });
+  render();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    if (!q) { render(); return; }
+    status.innerHTML = '<span class="spinner"></span>Searching local knowledge and external sources…';
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Search failed.');
+      renderResults(searchData(q));
+      renderExternalResults(result, q);
+    } catch (error) {
+      console.error(error);
+      renderResults(searchData(q));
+      status.textContent = 'Showing local results. External search is temporarily unavailable.';
+    }
+  });
+  function renderResults(res) {
+    const mysteryHits = res.results.filter((r) => r.type === 'mystery');
+    const otherHits = res.results.filter((r) => r.type !== 'mystery');
+    grid.innerHTML = mysteryHits.length
+      ? mysteryHits.map((r) => { const m = MYSTERIES.find((x) => x.id === r.id); return m ? cardHTML(m) : ''; }).join('')
+      : '<p>No direct match. Try "tilt", "water", "storm" or "life".</p>';
+    for (const card of grid.querySelectorAll('.mystery-card')) card.addEventListener('click', () => openDetail(card.dataset.id));
+    if (otherHits.length) {
+      related.hidden = false;
+      related.innerHTML = `<h3>Also matches</h3><ul>${otherHits.map((r) => `<li><a href="#${r.type === 'planet' ? 'planets' : 'life'}">${esc(r.title)} <small>· ${esc(r.badge ?? r.type)}</small></a></li>`).join('')}</ul>`;
+    } else related.hidden = true;
+    status.textContent = `${res.total} results for "${esc(res.query)}".`;
+  }
+  function renderExternalResults(result, q) {
+    const external = result.results || [];
+    const existing = related.hidden ? '' : related.innerHTML;
+    const items = external.map((r) => `
+      <li>
+        <a href="${escAttr(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.title)}</a>
+        <small> · ${esc(r.source || 'External source')}</small>
+        ${r.snippet ? `<p>${esc(r.snippet)}</p>` : ''}
+      </li>`).join('');
+    related.hidden = false;
+    related.innerHTML = `${existing ? existing : '<h3>External research results</h3>'}<ul>${items || `<li>No external result found for “${esc(q)}”.</li>`}</ul>`;
+    status.textContent = external.length
+      ? `Found ${external.length} external source${external.length === 1 ? '' : 's'} for “${q}”.`
+      : `No external sources found for “${q}”.`;
+  }
+
+  function escAttr(value) {
+    return String(value ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function cardHTML(m) {
+    return `
+      <article class="mystery-card" data-id="${esc(m.id)}" tabindex="0" role="button" aria-label="Open ${esc(m.title)}">
+        <header>
+          <span class="badge" data-status="${esc(m.status)}">${esc(m.category)}</span>
+          <span class="where">${esc(m.planetId ?? 'General')}</span>
+        </header>
+        <h3>${esc(m.title)}</h3>
+        <p>${esc(m.summary)}</p>
+      </article>`;
+  }
+  function openDetail(id) {
+    const m = MYSTERIES.find((x) => x.id === id);
+    if (!m) return;
+    modal.innerHTML = detailHTML(m);
+    const sx = window.scrollX, sy = window.scrollY;
+    modal.showModal();
+    window.scrollTo(sx, sy);
+    requestAnimationFrame(() => window.scrollTo(sx, sy));
+    modal.querySelector('.mm-close')?.addEventListener('click', () => modal.close());
+    const host = modal.querySelector('.mm-visual');
+    const Visual = m.visual ? VISUALS[m.visual.type] : null;
+    if (Visual && host) {
+      const canvas = document.createElement('canvas');
+      host.append(canvas);
+      const instance = Visual(canvas, m.visual);
+      modal.addEventListener('close', () => instance?.destroy?.(), { once: true });
+    }
+  }
+  function detailHTML(m) {
+    return `
+      <button class="mm-close" type="button" aria-label="Close">×</button>
+      <header class="mm-head">
+        <span class="badge">${esc(m.category)}</span>
+        <h3 id="mmTitle">${esc(m.title)}</h3>
+        <p class="where">${esc(m.planetId ?? 'General')} · ${esc(m.status)}</p>
+      </header>
+      <div class="mm-body">
+        <p class="lead">${esc(m.question)}</p>
+        <div class="mm-visual" aria-hidden="true"></div>
+        <section><h4>What we know</h4><ul>${m.know.map((k) => `<li>${esc(k)}</li>`).join('')}</ul></section>
+        <section><h4>Competing explanations</h4>${m.theories.map((t) => `<div class="theory" data-status="${esc(t.status)}"><b>${esc(t.name)} <small>(${esc(t.status)})</small></b><p>${esc(t.text)}</p></div>`).join('')}</section>
+        <section><h4>Research so far</h4><dl class="timeline">${m.research.map((r) => `<dt>${esc(r.year)}</dt><dd><b>${esc(r.who)}</b> — ${esc(r.finding)}</dd>`).join('')}</dl></section>
+        <section><h4>What happens next</h4><ul>${m.next.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></section>
+      </div>`;
+  }
+}
+
+/* ---- SEARCH ---- */
+const SYNONYMS = {
+  alien: ['life','seti','biosignature','habitable'], aliens: ['life','seti','biosignature'],
+  ufo: ['oumuamua'], hot: ['temperature','greenhouse'], cold: ['temperature','ice'],
+  water: ['ocean','ice'], ocean: ['water'], storm: ['weather','vortex'],
+  ring: ['rings'], spin: ['rotation','tilt'], sideways: ['tilt'],
+  atmosphere: ['air','gas'], weird: ['mystery','unknown'], moon: ['moons','lunar'],
+};
+const STOP = new Set(['the','a','an','of','is','are','in','on','to','and','or','why','how','what','does','do','did']);
+const words = (s) => String(s ?? '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9\s'-]/g, ' ').split(/\s+/).filter(Boolean);
+function searchData(query) {
+  const raw = words(query).filter((w) => !STOP.has(w));
+  if (!raw.length) return { query, total: 0, results: [] };
+  const docs = [
+    ...MYSTERIES.map((m) => ({ type: 'mystery', id: m.id, title: m.title, snippet: m.summary, badge: m.category, planetId: m.planetId, haystack: [m.title, m.summary, m.question, ...(m.tags ?? []), m.category, m.planetId ?? ''].join(' ').toLowerCase() })),
+    ...PLANETS.map((p) => ({ type: 'planet', id: p.id, title: p.name, snippet: p.tagline, badge: p.type, planetId: p.id, haystack: [p.name, p.tagline, p.speciality, ...(p.tags ?? []), ...(p.facts ?? [])].join(' ').toLowerCase() })),
+    ...LIFE.map((l) => ({ type: 'life', id: l.id, title: l.title, snippet: l.summary, badge: l.category, planetId: l.planetId, haystack: [l.title, l.summary, l.headline, ...(l.tags ?? [])].join(' ').toLowerCase() })),
+  ];
+  const results = [];
+  for (const doc of docs) {
+    let matched = 0, score = 0;
+    for (const token of raw) {
+      const alt = SYNONYMS[token] ?? [];
+      let hit = 0;
+      if (doc.haystack.includes(token)) hit = 6;
+      else if (alt.some((a) => doc.haystack.includes(a))) hit = 3;
+      else if (token.length >= 4 && doc.haystack.split(/\s+/).some((w) => w.startsWith(token))) hit = 4;
+      if (hit > 0) { matched++; score += hit; }
+    }
+    const needed = raw.length > 2 ? raw.length - 1 : raw.length;
+    if (matched >= needed && score > 0) results.push({ ...doc, score });
+  }
+  results.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+  return { query, total: results.length, results: results.slice(0, 12).map(({ haystack, ...r }) => r) };
+}
+
+/* ---- LIFE ---- */
+const LEVELS = [
+  { level: 1, label: 'Speculation',                  note: 'An idea under discussion.' },
+  { level: 2, label: 'Hypothesis',                   note: 'A framework, not an observation.' },
+  { level: 3, label: 'Disputed or unconfirmed',      note: 'A signal others could not confirm.' },
+  { level: 4, label: 'Habitable conditions confirmed', note: 'Ingredients present; not life.' },
+  { level: 5, label: 'Confirmed extraterrestrial life', note: 'Still empty.' },
+];
+function initLifeSection() {
+  const ladder = $('#ladder'), list = $('#lifeList'), detail = $('#lifeDetail');
+  let levelFilter = null, current = LIFE[0], running = null;
+  LEVELS.forEach((L) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<b>${L.level} · ${esc(L.label)}</b><small>${esc(L.note)}</small>`;
+    b.addEventListener('click', () => {
+      levelFilter = levelFilter === L.level ? null : L.level;
+      [...ladder.children].forEach((x) => x.setAttribute('aria-pressed', String(x === b && levelFilter != null)));
+      renderList();
+    });
+    ladder.append(b);
+  });
+  function renderList() {
+    const visible = levelFilter ? LIFE.filter((x) => x.level === levelFilter) : LIFE;
+    list.innerHTML = visible.map((e) => `
+      <li>
+        <button type="button" data-id="${esc(e.id)}" aria-current="${e.id === current?.id}">
+          <span class="badge" data-level="${e.level ?? ''}">${esc(e.category)}</span>
+          <span><b>${esc(e.title)}</b></span>
+          <span class="where">${esc(e.where)}</span>
+        </button>
+      </li>`).join('');
+    for (const b of list.querySelectorAll('button')) b.addEventListener('click', () => select(b.dataset.id));
+  }
+  function select(id) {
+    const e = LIFE.find((x) => x.id === id);
+    if (!e) return;
+    current = e;
+    renderList();
+    renderDetail(e);
+  }
+  function renderDetail(e) {
+    running?.destroy?.();
+    running = null;
+    detail.innerHTML = `
+      <header>
+        <span class="badge" data-level="${e.level ?? ''}">${esc(e.category)}</span>
+        <h3>${esc(e.title)}</h3>
+        <p class="headline">${esc(e.headline)}</p>
+        <p class="where">${esc(e.where)} · ${esc(e.year)}</p>
+      </header>
+      <div class="visual" aria-hidden="true"></div>
+      <section><h4>Summary</h4><p>${esc(e.summary)}</p></section>
+      <section><h4>What was found</h4><ul>${e.found.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></section>
+      <section><h4>What is debated</h4><ul>${e.debated.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></section>
+      ${e.next ? `<section><h4>What happens next</h4><ul>${e.next.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></section>` : ''}
+      <p class="sources">${(e.sources ?? []).map((s) => esc(s.label)).join(' · ')}</p>`;
+    const host = detail.querySelector('.visual');
+    host.style.display = 'block';
+    if (e.visual?.type && VISUALS[e.visual.type]) {
+      const canvas = document.createElement('canvas');
+      host.append(canvas);
+      running = VISUALS[e.visual.type](canvas, e.visual);
+    } else {
+      host.style.display = 'none';
+    }
+  }
+  renderList();
+  renderDetail(current);
+}
+
+/* ---- ABOUT ---- */
+function initAboutSection() {
+  const team = $('#teamGrid'), reviewed = $('#reviewed');
+  const form = $('#contactForm'), status = $('#cStatus');
+  team.innerHTML = TEAM.map((p) => `
+    <li>
+      <b>${esc(p.name)}</b>
+      <small>${esc(p.role)}</small>
+      <p>${esc(p.bio)}</p>
+    </li>`).join('');
+  reviewed.textContent = 'Content last reviewed 2026-10.';
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    for (const err of form.querySelectorAll('.field-error')) { err.hidden = true; err.textContent = ''; }
+    const errors = {};
+    if (!data.name || data.name.length < 2) errors.name = 'Please enter your name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email || '')) errors.email = 'Please enter a valid email address.';
+    if (!data.message || data.message.length < 10) errors.message = 'Message must be at least 10 characters.';
+    if (Object.keys(errors).length) {
+      for (const [field, msg] of Object.entries(errors)) {
+        const el = document.getElementById(`c${field[0].toUpperCase()}${field.slice(1)}Err`);
+        if (el) { el.textContent = msg; el.hidden = false; }
+      }
+      status.textContent = 'Please fix the highlighted fields.';
+      return;
+    }
+    status.innerHTML = '<span class="spinner"></span>Sending…';
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: data.name, email: data.email, message: data.message, website: data.website })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Unable to send message.');
+      form.reset();
+      status.textContent = result.message || 'Thanks — we got it.';
+      toast('Message sent to the owner');
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || 'Could not send your message. Please try again.';
+    }
+  });
+}
+
+/* ---- SEARCH OVERLAY ---- */
+function initSearchOverlay() {
+  const btn = $('#searchBtn'), input = $('#mysterySearch'), section = $('#mysteries');
+  const focus = () => {
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => input?.focus(), 400);
+  };
+  btn?.addEventListener('click', focus);
+  addEventListener('keydown', (e) => {
+    const tag = document.activeElement?.tagName;
+    if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+      e.preventDefault(); focus();
+    }
+  });
+}
+
+/* ============ BOOT ============ */
+async function boot() {
+  initReveal();
+  initNav();
+  initSearchOverlay();
+
+  // Solar section does NOT need Three.js — run it first with a tiny delay
+  // so the DOM has laid out, then again to be safe.
+  try { initSolarSection(); } catch (e) { console.error('[boot] solar failed', e); }
+  setTimeout(() => { try { const canvas = $('#orbitCanvas'); if (canvas) { const w = canvas.clientWidth; if (w > 4) { /* handled by retries inside init */ } } } catch {} }, 0);
+
+  try { THREE = await import('three'); }
+  catch (e) { console.warn('Three.js failed to load — 3D features disabled.', e); }
+
+  const tasks = [
+    ['hero', () => { if (THREE) initHeroSection(); }],
+    ['planets', () => {
+      if (THREE) initPlanetsSection();
+      else $('#planetPicker').innerHTML = '<p style="color:var(--night-ink-3)">3D viewer needs WebGL and network access to load Three.js.</p>';
+    }],
+    ['mysteries', initMysteriesSection],
+    ['life', initLifeSection],
+    ['about', initAboutSection],
+  ];
+  for (const [name, fn] of tasks) {
+    try { fn(); }
+    catch (e) { console.error(`[boot] ${name} failed`, e); }
+  }
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+else boot();
+</script>
+</body>
+</html>

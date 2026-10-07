@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: space-explorer
+    runtime: node
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OWNER_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: Space Explorer <onboarding@resend.dev>
